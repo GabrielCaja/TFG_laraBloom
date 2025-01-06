@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string("titulo");
             $table->string("contenido");
-            $table->integer("autor_id");
+            $table->unsignedBigInteger("autor_id");
             $table->timestamps();
+
+
         });
     }
 
