@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('comentario');
             $table->integer('valoracion');
             $table->timestamps();
+
+
+            $table->foreign('user_id')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
         });
     }
 
