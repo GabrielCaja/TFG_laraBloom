@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('carrito_id');
             $table->unsignedBigInteger('producto_id');
             $table->integer('cantidad');
-            $table->deicmal("precio_actual", 8, 2);
+            $table->decimal("precio_actual", 8, 2);
 
         });
     }
