@@ -18,8 +18,9 @@ return new class extends Migration
             $table->text('comentario');
             $table->timestamps();
             
-            //$table->foreign('articulo_id')->references('id')->on('articulos');
-            //$table->foreign('user_id')->references('id')->on('usuarios');
+            //Relacione
+            $table->foreign('articulo_id')->references('id')->on('articulos')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('usuarios')->onDelete('cascade');
         });
     }
 
