@@ -18,6 +18,10 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->decimal("precio_actual", 8, 2);
 
+            // Relaciones
+            $table->foreign('carrito_id')->references('id')->on('carrito')->onDelete('cascade');
+            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
+
         });
     }
 
