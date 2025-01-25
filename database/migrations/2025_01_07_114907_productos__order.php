@@ -17,6 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('producto_id');
             $table->integer('cantidad');
             $table->decimal('precio_compra', 8, 2);
+
+            // Relaciones
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
         });
     }
 
