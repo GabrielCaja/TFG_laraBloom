@@ -31,8 +31,18 @@ class UsuarioController extends Controller
             "password" => "required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
             "admin" => "required|boolean",
             "newsletter" => "required|boolean",
-        ]);
-
+        ],
+        [
+            "username.required" => "El campo username es obligatorio",
+            "username.string" => "El campo username debe ser una cadena de texto",
+            "email.required" => "El campo email es obligatorio",
+            "email.email" => "El campo email debe ser un email",
+            "password.required" => "El campo password es obligatorio",
+            "password.string" => "El campo password debe ser una cadena de texto",
+            "password.min" => "El campo password debe tener al menos 8 caracteres",
+            "password.regex" => "El campo password debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial",
+        ]
+    );
         $usuario = $this->usuario->create($request->all());
         return response()->json($usuario, 201);
         }
