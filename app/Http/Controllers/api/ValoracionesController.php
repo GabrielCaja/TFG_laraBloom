@@ -31,7 +31,25 @@ class ValoracionesController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request -> validate([
+            "user_id" => "required|integer",
+            "producto_id" => "required|integer",
+            "valoracion" => "required|integer",
+            "comentario" => "required|string",
+        ],
+        [
+            "user_id.required" => "El campo user_id es requerido",
+            "user_id.integer" => "El campo user_id debe ser un entero",
+            "producto_id.required" => "El campo producto_id es requerido",
+            "producto_id.integer" => "El campo producto_id debe ser un entero",
+            "valoracion.required" => "El campo valoracion es requerido",
+            "valoracion.integer" => "El campo valoracion debe ser un entero",
+            "comentario.required" => "El campo comentario es requerido",
+            "comentario.string" => "El campo comentario debe ser un string",
+        ]
+    );
+
+        $valoracion = $this->valoracion->create($request->all());
     }
 
     /**
@@ -39,7 +57,8 @@ class ValoracionesController extends Controller
      */
     public function show(string $id)
     {
-        
+        $valoracion = $this->valoracion->findOrFail($id);
+        return response()->json($valoracion);
     }
 
     /**
