@@ -17,8 +17,8 @@ class ComentariosBlog extends Model
         return $this->hasMany(Usuario::class);
     }
 
-    public function Blog()
+    public function Articulos()
     {
-        return $this->hasMany(Blog::class);
+        return $this->hasMany(Articulos::class);
     }
 }

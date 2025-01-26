@@ -14,11 +14,11 @@ class ProductosOrder extends Model
 
     public function Order()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Orders::class);
     }
 
     public function Producto()
     {
-        return $this->hasMany(Producto::class);
+        return $this->hasMany(Productos::class);
     }
 }

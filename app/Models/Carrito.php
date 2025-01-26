@@ -14,8 +14,4 @@ class Carrito extends Model
         return $this->hasMany(Usuario::class);
     }
 
-    // public function Productos_Carrito()
-    // {
-    //     return $this->hasMany(Articulos::class);
-    // }
 }
