@@ -19,7 +19,6 @@ class ProductosController extends Controller
     public function index()
     {
         $producto = $this->producto->all();
-
         return response()->json($producto);
     }
 
@@ -36,7 +35,8 @@ class ProductosController extends Controller
      */
     public function show(string $id)
     {
-        
+        $producto = $this->producto->find($id);
+        return response()->json($producto);
     }
 
     /**
