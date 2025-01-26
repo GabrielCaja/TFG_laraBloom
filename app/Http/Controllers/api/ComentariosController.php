@@ -78,6 +78,6 @@ class ComentariosController extends Controller
      */
     public function destroy(string $id)
     {
-        
+        $comentario = $this->comentario->findOrFail($id)->delete();
     }
 }
