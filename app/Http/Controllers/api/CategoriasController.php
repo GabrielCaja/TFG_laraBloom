@@ -78,6 +78,6 @@ class CategoriasController extends Controller
      */
     public function destroy(string $id)
     {
-        
+        $categoria = $this->categoria->find($id)->delete();
     }
 }
