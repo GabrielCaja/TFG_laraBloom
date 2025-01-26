@@ -84,6 +84,9 @@ class UsuarioController extends Controller
 
     public function destroy(string $id)
     {
-        
+        $usuario = $this->usuario->find($id);
+
+        $usuario->delete();
+        return response()->json("Usuario eliminado: " . $usuario->username, 204);
     }
 }
