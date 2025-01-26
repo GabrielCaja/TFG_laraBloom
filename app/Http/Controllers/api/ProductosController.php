@@ -93,6 +93,8 @@ class ProductosController extends Controller
      */
     public function destroy(string $id)
     {
+        $producto = $this->producto->find($id);
+        $producto->delete();
         
     }
 }
