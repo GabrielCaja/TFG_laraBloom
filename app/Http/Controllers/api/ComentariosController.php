@@ -28,7 +28,19 @@ class ComentariosController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request -> validate([
+            'comentario' => 'required|string',
+            'articulo_id' => 'required|integer',
+            'user_id' => 'required|integer'
+        ],
+        [
+            'comentario.required' => 'El campo comentario es obligatorio',
+            'articulo_id.required' => 'El campo articulo_id es obligatorio', 
+            'user_id.required' => 'El campo user_id es obligatorio'
+        ]
+        );
+
+        $comentario = $this->comentario->create($request->all());
     }
 
     /**
@@ -36,7 +48,9 @@ class ComentariosController extends Controller
      */
     public function show(string $id)
     {
-        
+        $comentario = $this->comentario->findOrFAil($id);
+        return response()->json($comentario);
+
     }
 
     /**
@@ -44,7 +58,19 @@ class ComentariosController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+        $request -> validate([
+            'comentario' => 'required|string',
+            'articulo_id' => 'required|integer',
+            'user_id' => 'required|integer'
+        ],
+        [
+            'comentario.required' => 'El campo comentario es obligatorio',
+            'articulo_id.required' => 'El campo articulo_id es obligatorio', 
+            'user_id.required' => 'El campo user_id es obligatorio'
+        ]
+        );
+
+        $comentario = $this->comentario->findOrFail($id)->update($request->all());
     }
 
     /**
