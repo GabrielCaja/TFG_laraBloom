@@ -37,7 +37,8 @@ class CategoriasController extends Controller
      */
     public function show(string $id)
     {
-        
+        $categoria = $this->categoria->find($id);   
+        return response()->json($categoria);
     }
 
     /**
