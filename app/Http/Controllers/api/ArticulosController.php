@@ -71,7 +71,7 @@ class ArticulosController extends Controller
             "autor_id.integer" => "El autor debe ser un ID entero"
         ]);
 
-        $articulo = $this->articulo->create($request->all());
+        $articulo = $this->articulo->findOrFail($id)->update($request->all());
     }
 
     /**
