@@ -6,6 +6,7 @@ use App\Http\Controllers\api\UsuarioController;
 use App\Http\Controllers\api\ProductosController;
 use App\Http\Controllers\api\CategoriasController;
 use App\Http\Controllers\api\ArticulosController;
+use App\Http\Controllers\api\ValoracionesController;
 
 //CRUD Usuario
 Route::resource("usuario", UsuarioController::class);
@@ -15,8 +16,8 @@ Route::resource("producto", ProductosController::class);
 Route::resource("categoria", CategoriasController::class);
 //Crud Carrito
 Route::resource("articulo", ArticulosController::class);
-// //Crud Orders
-// Route::resource("usuario", UsuarioController::class);
+//Crud Orders
+Route::resource("valoracion", ValoracionesController::class);
 // //Crud Valoraciones
 // Route::resource("usuario", UsuarioController::class);
 // //Crud Articulos
