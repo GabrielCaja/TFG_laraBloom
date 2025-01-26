@@ -79,6 +79,6 @@ class ArticulosController extends Controller
      */
     public function destroy(string $id)
     {
-        
+        $articulo = $this->articulo->findOrFail($id)->delete();
     }
 }
