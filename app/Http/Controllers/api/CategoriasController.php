@@ -29,7 +29,19 @@ class CategoriasController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request -> validate(
+            [
+                "nombre" => "required|string",
+                "descripcion" => "required|string",
+            ],
+            [
+                "nombre.required" => "El nombre es requerido",
+                "nombre.string" => "El nombre debe ser un texto",
+                "descripcion.required" => "La descripcion es requerida",
+                "descripcion.string" => "La descripcion debe ser un texto",
+            ]);
+
+        $categoria = $this->categoria->create($request->all());
     }
 
     /**
