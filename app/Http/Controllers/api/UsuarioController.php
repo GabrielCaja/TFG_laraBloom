@@ -14,8 +14,6 @@ class UsuarioController extends Controller
         $this->usuario = $usuario;
     }
     
-
-
     public function index()
     {
         $usuario = $this->usuario->all();
@@ -27,8 +25,17 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        
-    }
+        $request -> validate([
+            "username" => "required|string",
+            "email" => "required|email",
+            "password" => "required|string|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
+            "admin" => "required|boolean",
+            "newsletter" => "required|boolean",
+        ]);
+
+        $usuario = $this->usuario->create($request->all());
+        return response()->json($usuario, 201);
+        }
 
     /**
      * Display the specified resource.
