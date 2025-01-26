@@ -4,14 +4,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\UsuarioController;
 use App\Http\Controllers\api\ProductosController;
-
+use App\Http\Controllers\api\CategoriasController;
 
 //CRUD Usuario
 Route::resource("usuario", UsuarioController::class);
 //CRUD Produtos
 Route::resource("producto", ProductosController::class);
-// //CRUD Categorias
-// Route::resource("usuario", UsuarioController::class);
+//CRUD Categorias
+Route::resource("categoria", CategoriasController::class);
 // //Crud Carrito
 // Route::resource("usuario", UsuarioController::class);
 // //Crud Orders
