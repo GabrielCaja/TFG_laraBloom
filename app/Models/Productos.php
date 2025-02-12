@@ -8,7 +8,7 @@ class Productos extends Model
 {
     protected $table = 'productos';
     protected $primaryKey = 'id';
-    protected $fillable = ['nombre',"descripcion",'precio', 'stock', 'categoria_id'];
+    protected $fillable = ['nombre',"descripcion",'precio', 'stock', 'categoria_id',"rutaImg"];
 
     public function categoria()
     {

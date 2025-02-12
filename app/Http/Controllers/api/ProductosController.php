@@ -32,7 +32,8 @@ class ProductosController extends Controller
             "precio" => "required|decimal:2",
             "stock" => "required|integer",
             "descripcion" => "required|string",
-            "categoria_id" => "required|integer"
+            "categoria_id" => "required|integer",
+            "rutaImg" => "required|string"
         ],
         [
             "nombre.required" => "El nombre es requerido",
@@ -69,7 +70,8 @@ class ProductosController extends Controller
             "precio" => "required|decimal:2",
             "stock" => "required|integer",
             "descripcion" => "required|string",
-            "categoria_id" => "required|integer"
+            "categoria_id" => "required|integer",
+            "rutaImg" => "required|string"
         ],
         [
             "nombre.required" => "El nombre es requerido",
