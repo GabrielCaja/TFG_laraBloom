@@ -7,6 +7,7 @@
     </div>
 </template>
 <script setup>
-import Login from "./components/Login.vue";
+import Login from "./Login.vue";
+import { ref } from "vue";
 
 </script>
