@@ -19,14 +19,13 @@ return new class extends Migration
             $table->integer('stock');
             $table->unsignedBigInteger('categoria_id');
             $table->longText('rutaImg');
+            $table->boolean('visible')->default(true);
             $table->timestamps();
-
             //Relaciones
             $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
 
         });
     }
-
     /**
      * Reverse the migrations.
      */
