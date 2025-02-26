@@ -5,7 +5,6 @@
 </head>
 <body>
     <div id="app">
-    <h1>Dashboard</h1>
     <!-- El contenido del dashboard se renderizará aquí -->
         <div id="dashboard-content">
     </div>
