@@ -59,7 +59,12 @@ export default {
                     email: this.email,
                     password: this.password
                 });
+            
                 console.log(response.data);
+                if (response.data.es_admin == 0) {
+                    this.errorMessage = 'No tienes permisos para acceder';
+                    return;
+                }
                 this.$emit('loginSuccess', response.data);
                 localStorage.setItem('access_token', response.data.access_token);
             } catch (error) {
