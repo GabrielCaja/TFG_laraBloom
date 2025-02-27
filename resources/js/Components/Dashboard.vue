@@ -1,6 +1,6 @@
 <template>
+<h1>Dashboard</h1>
 
-<h1>Articulos</h1>
 
 </template>
 
