@@ -9,6 +9,7 @@ use App\Http\Controllers\api\ArticulosController;
 use App\Http\Controllers\api\ValoracionesController;
 use App\Http\Controllers\api\ComentariosController;
 use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\DashboardController;
 
 //CRUD Usuario
 Route::resource("usuario", UsuarioController::class)->middleware('auth:sanctum');
@@ -34,6 +35,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 //Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index']);
+
+Route::get('/metrics', [DashboardController::class, 'getMetrics'])->middleware('auth:sanctum');
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();

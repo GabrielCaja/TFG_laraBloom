@@ -1,17 +1,200 @@
 <template>
-<h1>Dashboard</h1>
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Panel de Control</h1>
 
+        <!-- Indicadores principales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Total Usuarios</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ metrics.usuarios?.total || 0 }}</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">
+                        <span class="text-green-500 font-medium">{{ metrics.usuarios?.newsletter || 0 }}</span> suscritos al newsletter
+                    </p>
+                </div>
+            </div>
 
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Total Productos</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ metrics.productos?.total || 0 }}</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">
+                        <span class="text-red-500 font-medium">{{ metrics.productos?.sin_stock || 0 }}</span> sin stock disponible
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Total Ventas</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ metrics.ordenes?.total || 0 }}</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">
+                        Valor promedio: <span class="text-purple-500 font-medium">{{ metrics.ordenes?.valor_promedio || 0 }}€</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Total Artículos</p>
+                        <p class="text-2xl font-bold text-gray-800">{{ metrics.articulos?.total || 0 }}</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos más vendidos y valorados -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Productos más vendidos -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Productos más vendidos</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unidades vendidas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr v-for="producto in metrics.productos_vendidos" :key="producto.id">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800">{{ producto.nombre }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-800">{{ producto.total_vendidos }}</td>
+                            </tr>
+                            <tr v-if="!metrics.productos_vendidos || metrics.productos_vendidos.length === 0">
+                                <td colspan="2" class="px-4 py-3 text-sm text-center text-gray-500">No hay datos disponibles</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Productos mejor valorados -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Productos mejor valorados</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Valoración</th>
+                                <th class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Reseñas</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr v-for="producto in metrics.productos_valorados" :key="producto.id">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800">{{ producto.nombre }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-800">
+                                    {{ producto.promedio_valoracion ? Number(producto.promedio_valoracion).toFixed(1) : '-' }} / 5
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-800">{{ producto.total_valoraciones }}</td>
+                            </tr>
+                            <tr v-if="!metrics.productos_valorados || metrics.productos_valorados.length === 0">
+                                <td colspan="3" class="px-4 py-3 text-sm text-center text-gray-500">No hay datos disponibles</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de ventas mensuales -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Ventas Mensuales</h2>
+            <div class="h-64">
+                <div v-if="metrics.ventas_mensuales && metrics.ventas_mensuales.length > 0" class="h-full">
+                    <!-- Aquí iría un gráfico utilizando Chart.js o una librería similar -->
+                    <!-- Representación simplificada de barras -->
+                    <div class="flex h-full items-end space-x-4">
+                        <div v-for="venta in metrics.ventas_mensuales" :key="`${venta.año}-${venta.mes}`" class="flex flex-col items-center">
+                            <div 
+                                class="w-12 bg-blue-500 rounded-t-md"
+                                :style="{ height: `${getBarHeight(venta.total)}%` }"
+                            ></div>
+                            <span class="text-xs font-medium mt-2">{{ getNombreMes(venta.mes) }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div v-else class="flex items-center justify-center h-full">
+                    <p class="text-gray-500">No hay datos de ventas disponibles</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-<script lang="ts" setup> 
+const metrics = ref({
+    usuarios: { total: 0, newsletter: 0 },
+    productos: { total: 0, visibles: 0, sin_stock: 0 },
+    articulos: { total: 0 },
+    ordenes: { total: 0, valor_promedio: 0 },
+    productos_valorados: [],
+    productos_vendidos: [],
+    ventas_mensuales: []
+});
 
+onMounted(async () => {
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get('/api/metrics', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        metrics.value = response.data;
+    } catch (error) {
+        console.error('Error al cargar métricas:', error);
+    }
+});
+
+// Función para obtener la altura proporcional de las barras del gráfico
+const getBarHeight = (value) => {
+    if (!metrics.value.ventas_mensuales || metrics.value.ventas_mensuales.length === 0) return 0;
+    
+    const maxValue = Math.max(...metrics.value.ventas_mensuales.map(v => v.total));
+    return maxValue ? (value / maxValue) * 90 : 0; // 90% como máximo para dejar espacio para el texto
+};
+
+// Función para convertir el número de mes a nombre
+const getNombreMes = (mes) => {
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return meses[mes - 1];
+};
 </script>
-
-
-
-<style scoped>
-
-
-</style>
