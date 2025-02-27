@@ -1,8 +1,9 @@
 <template>
     <div class="flex items-center justify-center min-h-screen bg-gray-50">
         <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold text-center text-gray-800">Login</h2>
-            <img src="" alt="LOGO TIENDA">
+            <div class="flex justify-center">
+                <img src="/public/logo.png" alt="LOGO TIENDA" class="h-32">
+            </div>
             <form @submit.prevent="login" class="space-y-4">
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
