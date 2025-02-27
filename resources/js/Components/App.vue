@@ -14,7 +14,7 @@
                                 class="w-full text-left py-3 px-4 rounded-lg transition-all duration-200 flex items-center"
                                 :class="currentView === 'Dashboard' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
                             >
-                                <span class="font-medium">Dashboard</span>
+                                <span class="font-medium">Métricas</span>
                             </button>
                             <button 
                                 @click="currentView = 'Productos'"
