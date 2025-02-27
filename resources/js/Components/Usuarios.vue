@@ -73,6 +73,7 @@
                         <th scope="col" class="px-6 py-4">Nombre</th>
                         <th scope="col" class="px-6 py-4">Email</th>
                         <th scope="col" class="px-6 py-4">Rol</th>
+                        <th scope="col" class="px-6 py-4">Newsletter</th>
                         <th scope="col" class="px-6 py-4">Acciones</th>
                     </tr>
                 </thead>
@@ -91,6 +92,14 @@
                                 class="px-2.5 py-1 rounded-full text-xs font-medium"
                             >
                                 {{ usuario.admin ? 'Admin' : 'Usuario' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span 
+                                :class="usuario.newsletter ? 'bg-green-100 text-white-800' : 'bg-red-100 text-white-800'" 
+                                class="px-2.5 py-1 rounded-full text-xs font-medium"
+                            >
+                                {{ usuario.newsletter ? 'Si' : 'No' }}
                             </span>
                         </td>
                         <td class="px-6 py-4">
