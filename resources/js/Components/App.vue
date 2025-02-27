@@ -24,6 +24,13 @@
                                 <span class="font-medium">Productos</span>
                             </button>
                             <button 
+                                @click="currentView = 'Categorias'"
+                                class="w-full text-left py-3 px-4 rounded-lg transition-all duration-200 flex items-center"
+                                :class="currentView === 'Categorias' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
+                            >
+                                <span class="font-medium">Categorias</span>
+                            </button>
+                            <button 
                                 @click="currentView = 'Usuarios'"
                                 class="w-full text-left py-3 px-4 rounded-lg transition-all duration-200 flex items-center"
                                 :class="currentView === 'Usuarios' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
@@ -69,6 +76,7 @@ import Productos from "./Productos.vue";
 import Usuarios from "./Usuarios.vue";
 import Articulos from "./Articulos.vue";
 import Dashboard from "./Dashboard.vue";
+import Categorias from "./Categorias.vue";
 import axios from "axios";
 
 import { ref } from "vue";
@@ -76,6 +84,7 @@ import { ref } from "vue";
 export default {
     components: { 
         Login,
+        Categorias,
         Dashboard,
         Productos,
         Usuarios,

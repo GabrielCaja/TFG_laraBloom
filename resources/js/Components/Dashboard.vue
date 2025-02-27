@@ -288,8 +288,6 @@
                     "
                     class="h-full"
                 >
-                    <!-- Aquí iría un gráfico utilizando Chart.js o una librería similar -->
-                    <!-- Representación simplificada de barras -->
                     <div class="flex h-full items-end space-x-4">
                         <div
                             v-for="venta in metrics.ventas_mensuales"
