@@ -116,6 +116,10 @@ const editarUsuario = (usuario) => {
 
 //Eliminar usuario
 const eliminarUsuario = (id) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+        return;
+    }
+
     const token = localStorage.getItem("access_token");
 
     axios
@@ -128,11 +132,13 @@ const eliminarUsuario = (id) => {
             usuarios.value = usuarios.value.filter(
                 (usuario) => usuario.id !== id
             );
-            alert("Usuario eliminado");
         })
         .catch((error) => {
-            console.error("Error al eliminar usuario:",error.response.data.errors );
-            alert("Error al eliminar usuario", error.response.data.erros );
+            console.error(
+                "Error al eliminar usuario:",
+                error.response.data.errors
+            );
+            alert("Error al eliminar usuario", error.response.data.erros);
         });
 };
 
