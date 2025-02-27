@@ -67,25 +67,20 @@ class ProductosController extends Controller
     public function update(Request $request, string $id)
     {
         $request -> validate([
-            "nombre" => "required|string",
-            "precio" => "required|decimal:2",
-            "stock" => "required|integer",
-            "descripcion" => "required|string",
-            "categoria_id" => "required|integer",
-            "rutaImg" => "required|string",
-            "visible" => "required|boolean"
+            "nombre" => "string",
+            "precio" => "decimal:2",
+            "stock" => "integer",
+            "descripcion" => "string",
+            "categoria_id" => "integer",
+            "rutaImg" => "string",
+            "visible" => "boolean"
 
         ],
         [
-            "nombre.required" => "El nombre es requerido",
             "nombre.string" => "El nombre debe ser un string",
-            "precio.required" => "El precio es requerido",
             "precio.decimal" => "El precio debe ser un decimal",
-            "stock.required" => "El stock es requerido",
             "stock.integer" => "El stock debe ser un entero",
-            "descripcion.required" => "La descripción es requerida",
             "descripcion.string" => "La descripción debe ser un string",
-            "categoria_id.required" => "La categoría es requerida",
             "categoria_id.integer" => "La categoria debe ser un entero"
 
         ]);
