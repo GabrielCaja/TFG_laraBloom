@@ -79,7 +79,7 @@
                     <input
                         type="file"
                         accept="image/*"
-                        @change="handleImageUpload"
+                        @change="subirImagen"
                         class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     />
                     <img
@@ -259,7 +259,7 @@
                         <div>
                             <label
                                 class="block text-sm font-medium text-gray-700 mb-1"
-                                >Visible</label
+                                >Visibilidad</label
                             >
                             <select
                                 class="w-full bg-white border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -309,11 +309,11 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 //Transformar imagen
-const handleImageUpload = (event) => {
+const subirImagen = (event) => {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Verificar tamaño (máximo 2MB)
+    // Verificar tamaño (máximo 2MB) para no saturar la base de datos
     if (file.size > 2 * 1024 * 1024) {
         alert('La imagen no debe superar los 2MB');
         return;
