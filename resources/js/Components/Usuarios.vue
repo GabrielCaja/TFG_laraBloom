@@ -116,7 +116,24 @@ const editarUsuario = (usuario) => {
 
 //Eliminar usuario
 const eliminarUsuario = (id) => {
-    console.log(id);
+    const token = localStorage.getItem("access_token");
+
+    axios
+        .delete(`/api/usuario/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            usuarios.value = usuarios.value.filter(
+                (usuario) => usuario.id !== id
+            );
+            alert("Usuario eliminado");
+        })
+        .catch((error) => {
+            console.error("Error al eliminar usuario:",error.response.data.errors );
+            alert("Error al eliminar usuario", error.response.data.erros );
+        });
 };
 
 //Agregar usuario
