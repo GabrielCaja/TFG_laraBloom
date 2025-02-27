@@ -117,6 +117,7 @@
                 <thead class="text-xs text-white uppercase bg-blue-600">
                     <tr>
                         <th scope="col" class="px-6 py-4">ID</th>
+                        <th scope="col" class="px-6 py-4">Imagen</th>
                         <th scope="col" class="px-6 py-4">Nombre</th>
                         <th scope="col" class="px-6 py-4">Precio</th>
                         <th scope="col" class="px-6 py-4">Stock</th>
@@ -132,6 +133,17 @@
                         class="bg-white border-b hover:bg-gray-50 transition-colors"
                     >
                         <td class="px-6 py-4 font-medium">{{ producto.id }}</td>
+
+                        <td class="px-6 py-4 font-medium">
+                            <img
+                                v-if="producto.rutaImg"
+                                :src="producto.rutaImg"
+                                alt="Imagen del producto"
+                                class="h-16 w-16 object-cover rounded"
+                            />
+                            <span v-else class="text-gray-400">Sin imagen</span>
+                        </td>
+
                         <td class="px-6 py-4">{{ producto.nombre }}</td>
                         <td class="px-6 py-4">{{ producto.precio }}€</td>
                         <td class="px-6 py-4">{{ producto.stock }}</td>
@@ -271,15 +283,21 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="flex-grow min-w-[200px]">
                         <label
                             class="block text-sm font-medium text-gray-700 mb-1"
-                            >URL de Imagen</label
+                            >Imagen</label
                         >
                         <input
-                            type="text"
+                            type="file"
+                            accept="image/*"
+                            @change="(e) => subirImagen(e, true)"
                             class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            v-model="productoEditando.rutaImg"
+                        />
+                        <img
+                            v-if="productoEditando.rutaImg"
+                            :src="productoEditando.rutaImg"
+                            class="mt-2 h-32 object-contain"
                         />
                     </div>
                 </form>
@@ -309,20 +327,24 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 //Transformar imagen
-const subirImagen = (event) => {
+const subirImagen = (event, esEdicion = false) => {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     // Verificar tamaño (máximo 2MB) para no saturar la base de datos
     if (file.size > 2 * 1024 * 1024) {
-        alert('La imagen no debe superar los 2MB');
+        alert("La imagen no debe superar los 2MB");
         return;
     }
-    
+
     // Convertir a base64
     const reader = new FileReader();
     reader.onload = (e) => {
-        nuevoProducto.value.rutaImg = e.target.result;
+        if (esEdicion) {
+            productoEditando.value.rutaImg = e.target.result;
+        } else {
+            nuevoProducto.value.rutaImg = e.target.result;
+        }
     };
     reader.readAsDataURL(file);
 };
