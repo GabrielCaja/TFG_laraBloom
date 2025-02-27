@@ -2,9 +2,9 @@
     <div>
         <Login v-if="!isAuthenticated" @loginSuccess="handleLoginSuccess" />
         <div v-else class="min-h-screen bg-gray-50">
-            <!-- Dashboard layout with improved styling -->
+            <!-- Dashboard  -->
             <div class="flex h-screen overflow-hidden">
-                <!-- Sidebar - improved with better spacing, shadows and hover effects -->
+                <!-- Sidebar  -->
                 <div class="w-64 bg-gray-900 text-white shadow-xl">
                     <div class="p-6">
                         <h2 class="text-2xl font-bold mb-8 text-blue-400">Bienvenido</h2>
@@ -39,7 +39,7 @@
                             </button>
                         </nav>
                     </div>
-                    <!-- Logout button fixed at bottom with improved styling -->
+                    <!-- Logout -->
                     <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-gray-700">
                         <button @click="logout" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 active:bg-red-800 shadow-md hover:shadow-lg transition-all duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
 
-                <!-- Main content with improved padding and background -->
+                <!-- Main -->
                 <div class="flex-1 overflow-y-auto bg-gray-50">
                     <div class="p-8">
                         <component :is="currentView" />
@@ -91,12 +91,14 @@ export default {
         this.checkAuth();
     },
     methods: {
+        //Verificar si el usuario esta autenticado
         checkAuth() {
             this.isAuthenticated = !!localStorage.getItem("access_token");
         },
         handleLoginSuccess() {
             this.isAuthenticated = true;
         },
+        //Cerrar sesion 
         async logout() {
             try {
                 const token = localStorage.getItem("access_token");
