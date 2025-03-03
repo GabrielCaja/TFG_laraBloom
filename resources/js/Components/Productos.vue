@@ -116,19 +116,37 @@
             <table class="w-full text-sm text-left text-gray-500">
                 <thead class="text-xs text-white uppercase bg-blue-600">
                     <tr>
-                        <th scope="col" class="px-6 py-4">ID</th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('id')">
+                            ID
+                            <span v-if="ordenarPor === 'id'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-4">Imagen</th>
-                        <th scope="col" class="px-6 py-4">Nombre</th>
-                        <th scope="col" class="px-6 py-4">Precio</th>
-                        <th scope="col" class="px-6 py-4">Stock</th>
-                        <th scope="col" class="px-6 py-4">Categoría</th>
-                        <th scope="col" class="px-6 py-4">Visible</th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('nombre')">
+                            Nombre
+                            <span v-if="ordenarPor === 'nombre'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('precio')">
+                            Precio
+                            <span v-if="ordenarPor === 'precio'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('stock')">
+                            Stock
+                            <span v-if="ordenarPor === 'stock'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('categoria_id')">
+                            Categoría
+                            <span v-if="ordenarPor === 'categoria_id'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
+                        <th scope="col" class="px-6 py-4 cursor-pointer" @click="cambiarOrden('visible')">
+                            Visible
+                            <span v-if="ordenarPor === 'visible'" class="ml-1">{{ ordenAscendente ? '↑' : '↓' }}</span>
+                        </th>
                         <th scope="col" class="px-6 py-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
-                        v-for="producto in productos"
+                        v-for="producto in productosOrdenados"
                         :key="producto.id"
                         class="bg-white border-b hover:bg-gray-50 transition-colors"
                     >
@@ -324,8 +342,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+
+// Variables para ordenación
+const ordenarPor = ref('id');
+const ordenAscendente = ref(true);
+
+// Función para cambiar el criterio de ordenación
+const cambiarOrden = (campo) => {
+    if (ordenarPor.value === campo) {
+        // Si ya estábamos ordenando por este campo, invertimos la dirección
+        ordenAscendente.value = !ordenAscendente.value;
+    } else {
+        // Si cambiamos de campo, establecemos orden ascendente por defecto
+        ordenarPor.value = campo;
+        ordenAscendente.value = true;
+    }
+};
+
 //Transformar imagen
 const subirImagen = (event, esEdicion = false) => {
     const file = event.target.files[0];
@@ -348,6 +383,7 @@ const subirImagen = (event, esEdicion = false) => {
     };
     reader.readAsDataURL(file);
 };
+
 // Estados reactivos
 const mostrarModal = ref(false);
 const productos = ref([]);
@@ -374,6 +410,42 @@ const nuevoProducto = ref({
     categoria_id: "",
     rutaImg: "",
     visible: true,
+});
+
+// Productos ordenados según criterio seleccionado
+const productosOrdenados = computed(() => {
+    return [...productos.value].sort((a, b) => {
+        let valorA = a[ordenarPor.value];
+        let valorB = b[ordenarPor.value];
+        
+        // Manejo especial para categoría (mostrar el nombre en vez del ID)
+        if (ordenarPor.value === 'categoria_id') {
+            const categoriaA = categorias.value.find(c => c.id === valorA);
+            const categoriaB = categorias.value.find(c => c.id === valorB);
+            valorA = categoriaA ? categoriaA.nombre : '';
+            valorB = categoriaB ? categoriaB.nombre : '';
+        }
+        
+        // Comparación según tipo de dato
+        if (typeof valorA === 'string' || ordenarPor.value === 'categoria_id') {
+            // Ordenación para strings 
+            valorA = String(valorA).toLowerCase();
+            valorB = String(valorB).toLowerCase();
+            const comparacion = valorA.localeCompare(valorB);
+            return ordenAscendente.value ? comparacion : -comparacion;
+        } else if (typeof valorA === 'number') {
+            // Ordenación para números
+            const comparacion = valorA - valorB;
+            return ordenAscendente.value ? comparacion : -comparacion;
+        } else if (typeof valorA === 'boolean') {
+            // Ordenación para booleanos
+            const comparacion = valorA === valorB ? 0 : valorA ? 1 : -1;
+            return ordenAscendente.value ? comparacion : -comparacion;
+        } else {
+            const comparacion = valorA > valorB ? 1 : valorA < valorB ? -1 : 0;
+            return ordenAscendente.value ? comparacion : -comparacion;
+        }
+    });
 });
 
 // Token de autenticación
@@ -534,4 +606,12 @@ const agregarProducto = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.cursor-pointer {
+    cursor: pointer;
+}
+
+th:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+</style>
