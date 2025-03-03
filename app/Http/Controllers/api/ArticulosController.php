@@ -29,14 +29,13 @@ class ArticulosController extends Controller
         $request -> validate([
             "titulo" => "required|string",
             "contenido" => "required|string",
-            "autor_id" => "required|integer"
+            "rutaImg" => "required|string"
         ],
         [
             "titulo.required" => "El titulo es requerido",
             "titulo.string" => "El titulo debe ser un string",
             "contenido.required" => "El contenido es requerido",
             "contenido.string" => "El contenido debe ser un string",
-            "autor_id.required" => "El autor es requerido",
             "autor_id.integer" => "El autor debe ser un ID entero"
         ]);
 
@@ -60,14 +59,14 @@ class ArticulosController extends Controller
         $request -> validate([
             "titulo" => "required|string",
             "contenido" => "required|string",
-            "autor_id" => "required|integer"
+            "autor_id" => "integer",
+            "rutaImg" => "string"
         ],
         [
             "titulo.required" => "El titulo es requerido",
             "titulo.string" => "El titulo debe ser un string",
             "contenido.required" => "El contenido es requerido",
             "contenido.string" => "El contenido debe ser un string",
-            "autor_id.required" => "El autor es requerido",
             "autor_id.integer" => "El autor debe ser un ID entero"
         ]);
 
