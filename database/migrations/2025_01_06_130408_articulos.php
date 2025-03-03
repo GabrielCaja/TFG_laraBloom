@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("titulo");
             $table->string("contenido");
             $table->unsignedBigInteger("autor_id");
+            $table->longText('rutaImg');
             $table->timestamps();
 
             $table->foreign('autor_id')->references('id')->on('usuarios')->onDelete('cascade');
