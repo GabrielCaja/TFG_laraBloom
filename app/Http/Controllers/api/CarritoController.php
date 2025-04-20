@@ -182,4 +182,52 @@ public function store(Request $request)
         
         return response()->json(['message' => 'Carrito vaciado'], 200);
     }
+    public function actualizarProducto(Request $request)
+    {
+        try {
+            //Validar la petición
+            $request->validate([
+                'producto_id' => 'required|integer|exists:productos,id',
+                'cantidad' => 'required|integer|min:1',
+            ]);
+
+            //Obtener el ID del usuario autenticado
+            $userId = Auth::id();
+            
+            //Obtener el carrito del usuario autenticado
+            $carrito = $this->carrito->where('user_id', $userId)->firstOrFail();
+
+            //Buscar el producto en el carrito
+            $productoEnCarrito = DB::table('productos__carrito')
+                ->where('carrito_id', $carrito->id)
+                ->where('producto_id', $request->producto_id)
+                ->first();
+                
+            if (!$productoEnCarrito) {
+                return response()->json(['message' => 'Producto no encontrado en el carrito'], 404);
+            }
+
+            //Actualizar la cantidad
+            DB::table('productos__carrito')
+                ->where('id', $productoEnCarrito->id)
+                ->update(['cantidad' => $request->cantidad]);
+
+            //Obtener el producto actualizado
+            $productoActualizado = DB::table('productos__carrito')
+                ->where('id', $productoEnCarrito->id)
+                ->first();
+
+            //Devolver respuesta exitosa
+            return response()->json([
+                'mensaje' => 'Cantidad actualizada correctamente',
+                'carrito_producto' => $productoActualizado
+            ]);
+        } catch (\Exception $e) {
+            //Manejar errores
+            return response()->json([
+                'error' => 'Error al actualizar la cantidad del producto: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
+
