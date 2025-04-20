@@ -21,7 +21,6 @@ class CarritoController extends Controller
         $this->carrito = $carrito;
     }
 
-    
     public function index()
     {
         // Obtener todos los carritos con sus productos relacionados
@@ -58,10 +57,7 @@ public function store(Request $request)
     
     // Obtener el ID del usuario autenticado
     $userId = Auth::id();
-    // Si Auth::id() está retornando null, usar user_id del request
-    if (!$userId && $request->has('user_id')) {
-        $userId = $request->user_id;
-    }
+    
     // Buscar si el usuario ya tiene un carrito
     $carrito = $this->carrito->where('user_id', $userId)->first();
     
@@ -107,4 +103,37 @@ public function store(Request $request)
     
     return response()->json($carritoActualizado, 201);
 }
+    public function miCarrito()
+    {
+        // Obtener el ID del usuario autenticado
+        $userId = Auth::id();
+        
+        // Buscar el carrito del usuario autenticado
+        $carrito = $this->carrito->where('user_id', $userId)
+            ->with(['productos' => function($query) {
+                $query->join('productos', 'productos__carrito.producto_id', '=', 'productos.id')
+                    ->select('productos__carrito.*', 'productos.nombre', 'productos.rutaImg', 'productos.precio');
+            }])
+            ->first();
+        
+        if (!$carrito) {
+            // Si no existe un carrito, devolver uno vacío
+            return response()->json(['message' => 'No tienes un carrito activo', 'productos' => []], 200);
+        }
+        
+        return response()->json($carrito);
+    }
+    public function destroy($id)
+    {
+        // Eliminar un producto del carrito
+        $productoEnCarrito = DB::table('productos__carrito')->where('id', $id)->first();
+        
+        if (!$productoEnCarrito) {
+            return response()->json(['message' => 'Producto no encontrado en el carrito'], 404);
+        }
+        
+        DB::table('productos__carrito')->where('id', $id)->delete();
+        
+        return response()->json(['message' => 'Producto eliminado del carrito'], 200);
+    }
 }
