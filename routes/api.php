@@ -10,7 +10,9 @@ use App\Http\Controllers\api\ValoracionesController;
 use App\Http\Controllers\api\ComentariosController;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\DashboardController;
-
+use App\Http\Controllers\api\CarritoController;
+use App\Http\Controllers\api\OrdersController;
+use App\Http\Controllers\api\ProductoOrderController;
 //CRUD Usuario
 Route::resource("usuario", UsuarioController::class)->middleware('auth:sanctum');
 //CRUD Produtos
@@ -18,7 +20,9 @@ Route::resource("producto", ProductosController::class);
 //CRUD Categorias
 Route::resource("categoria", CategoriasController::class);
 //Crud articulo
-Route::resource("articulo", ArticulosController::class)->middleware('auth:sanctum');
+Route::resource("articulo", ArticulosController::class);
+//Crud carrito
+Route::resource("carrito", CarritoController::class);
 //Crud Valoraciones
 Route::resource("valoracion", ValoracionesController::class);
 //Crud ComentariosBlog
