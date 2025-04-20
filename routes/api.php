@@ -23,8 +23,8 @@ Route::resource("categoria", CategoriasController::class);
 Route::resource("articulo", ArticulosController::class);
 //Crud carrito
 Route::middleware('auth:sanctum')->get('/carrito/mi-carrito', [CarritoController::class, 'miCarrito']);
-
-Route::get('/carrito/{id}', [CarritoController::class, 'show']);
+Route::delete('carrito/producto/{productoId}', [CarritoController::class, 'eliminarProducto'])->middleware('auth:sanctum');
+Route::resource("carrito", CarritoController::class)->middleware('auth:sanctum');
 //Crud Valoraciones
 Route::resource("valoracion", ValoracionesController::class);
 //Crud ComentariosBlog

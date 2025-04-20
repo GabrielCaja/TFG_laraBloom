@@ -23,7 +23,7 @@ class CarritoController extends Controller
 
     public function index()
     {
-        // Obtener todos los carritos con sus productos relacionados
+        //Obtener todos los carritos con sus productos relacionados
         $carritos = $this->carrito->with(['productos' => function($query) {
             $query->join('productos', 'productos__carrito.producto_id', '=', 'productos.id')
                 ->select('productos__carrito.*', 'productos.nombre', 'productos.rutaImg', 'productos.precio');
@@ -49,44 +49,43 @@ class CarritoController extends Controller
 
 public function store(Request $request)
 {
-    // Validar la solicitud
+    //Validar la solicitud
     $request->validate([
         'producto_id' => 'required|exists:productos,id',
         'cantidad' => 'required|integer|min:1',
     ]);
     
-    // Obtener el ID del usuario autenticado
+    //Obtener el ID del usuario autenticado
     $userId = Auth::id();
     
-    // Buscar si el usuario ya tiene un carrito
+    //Buscar si el usuario ya tiene un carrito
     $carrito = $this->carrito->where('user_id', $userId)->first();
     
-    // Si no tiene carrito, crear uno nuevo
+    //Si no tiene carrito, crear uno nuevo
     if (!$carrito) {
         $carrito = new Carrito();
         $carrito->user_id = $userId;
         $carrito->save();
     }
     
-    // Obtener el producto y su precio actual
+    //Obtener el producto y su precio actual
     $producto = Productos::findOrFail($request->producto_id);
     
-    // Verificar si el producto ya está en el carrito
+    //Verificar si el producto ya está en el carrito
     $productoEnCarrito = DB::table('productos__carrito')
         ->where('carrito_id', $carrito->id)
         ->where('producto_id', $request->producto_id)
         ->first();
     
     if ($productoEnCarrito) {
-        // Actualizar la cantidad si ya existe
+        //Actualizar la cantidad si ya existe
         DB::table('productos__carrito')
             ->where('id', $productoEnCarrito->id)
             ->update([
-                'cantidad' => $productoEnCarrito->cantidad + $request->cantidad,
-                'updated_at' => now()
+                'cantidad' => $productoEnCarrito->cantidad + $request->cantidad
             ]);
     } else {
-        // Agregar nuevo producto al carrito
+        //Agregar nuevo producto al carrito
         DB::table('productos__carrito')->insert([
             'carrito_id' => $carrito->id,
             'producto_id' => $request->producto_id,
@@ -95,7 +94,7 @@ public function store(Request $request)
         ]);
     }
     
-    // Devolver el carrito actualizado con sus productos
+    //Deevolver el carrito actualizado con sus productos
     $carritoActualizado = $this->carrito->with(['productos' => function($query) {
         $query->join('productos', 'productos__carrito.producto_id', '=', 'productos.id')
             ->select('productos__carrito.*', 'productos.nombre', 'productos.rutaImg', 'productos.precio');
@@ -105,10 +104,10 @@ public function store(Request $request)
 }
     public function miCarrito()
     {
-        // Obtener el ID del usuario autenticado
+        //Obtener el ID del usuario autenticado
         $userId = Auth::id();
         
-        // Buscar el carrito del usuario autenticado
+        //Buscar el carrito del usuario autenticado
         $carrito = $this->carrito->where('user_id', $userId)
             ->with(['productos' => function($query) {
                 $query->join('productos', 'productos__carrito.producto_id', '=', 'productos.id')
@@ -125,7 +124,7 @@ public function store(Request $request)
     }
     public function destroy($id)
     {
-        // Eliminar un producto del carrito
+        //Eliminar un producto del carrito
         $productoEnCarrito = DB::table('productos__carrito')->where('id', $id)->first();
         
         if (!$productoEnCarrito) {
@@ -135,5 +134,52 @@ public function store(Request $request)
         DB::table('productos__carrito')->where('id', $id)->delete();
         
         return response()->json(['message' => 'Producto eliminado del carrito'], 200);
+    }
+    public function eliminarProducto($productoId)
+    {
+    //Obtener el ID del usuario autenticado
+    $userId = Auth::id();
+    
+    //Buscar el carrito del usuario
+    $carrito = $this->carrito->where('user_id', $userId)->first();
+    
+    if (!$carrito) {
+        return response()->json(['message' => 'No tienes un carrito activo'], 404);
+    }
+    
+    //Verificar que el producto a eliminar pertenece al carrito del usuario autenticado
+    $productoEnCarrito = DB::table('productos__carrito')
+                        ->where('producto_id', $productoId)
+                        ->where('carrito_id', $carrito->id)
+                        ->first();
+    
+    if (!$productoEnCarrito) {
+        return response()->json(['message' => 'Producto no encontrado en tu carrito'], 404);
+    }
+    
+    //Eliminar el producto del carrito basado en producto_id
+    DB::table('productos__carrito')
+        ->where('producto_id', $productoId)
+        ->where('carrito_id', $carrito->id)
+        ->delete();
+    
+    return response()->json(['message' => 'Producto eliminado del carrito'], 200);
+}
+    public function vaciarCarrito()
+    {
+        //Obtener el ID del usuario autenticado
+        $userId = Auth::id();
+        
+        //Buscar el carrito del usuario
+        $carrito = $this->carrito->where('user_id', $userId)->first();
+        
+        if (!$carrito) {
+            return response()->json(['message' => 'No tienes un carrito activo'], 404);
+        }
+        
+        //Eliminar todos los productos del carrito
+        DB::table('productos__carrito')->where('carrito_id', $carrito->id)->delete();
+        
+        return response()->json(['message' => 'Carrito vaciado'], 200);
     }
 }
