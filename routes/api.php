@@ -13,8 +13,15 @@ use App\Http\Controllers\api\DashboardController;
 use App\Http\Controllers\api\CarritoController;
 use App\Http\Controllers\api\OrdersController;
 use App\Http\Controllers\api\ProductoOrderController;
+
 //CRUD Usuario
+// Rutas para el perfil del usuario
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/usuario/perfil', [UsuarioController::class, 'perfil']);
+    Route::put('/usuario/perfil', [UsuarioController::class, 'actualizarPerfil']);
+});
 Route::resource("usuario", UsuarioController::class)->middleware('auth:sanctum');
+
 //CRUD Produtos
 Route::resource("producto", ProductosController::class);
 //CRUD Categorias
