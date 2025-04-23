@@ -76,6 +76,7 @@ class ArticulosController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    //
     public function destroy(string $id)
     {
         $articulo = $this->articulo->findOrFail($id)->delete();
