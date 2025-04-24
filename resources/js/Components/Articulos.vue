@@ -48,18 +48,7 @@
                         class="mt-2 h-32 object-contain"
                     />
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1"
-                        >Publicado</label
-                    >
-                    <select
-                        class="bg-white border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        v-model="nuevoArticulo.publicado"
-                    >
-                        <option :value="true">Sí</option>
-                        <option :value="false">No</option>
-                    </select>
-                </div>
+                
                 <div>
                     <button
                         @click="agregarArticulo"
@@ -80,7 +69,6 @@
                         <th scope="col" class="px-6 py-4">Imagen</th>
                         <th scope="col" class="px-6 py-4">Título</th>
                         <th scope="col" class="px-6 py-4">Fecha</th>
-                        <th scope="col" class="px-6 py-4">Estado</th>
                         <th scope="col" class="px-6 py-4">Acciones</th>
                     </tr>
                 </thead>
@@ -102,24 +90,13 @@
                         </td>
                         <td class="px-6 py-4">{{ articulo.titulo }}</td>
                         <td class="px-6 py-4">{{ formatearFecha(articulo.created_at) }}</td>
-                        <td class="px-6 py-4">
-                            <span
-                                :class="
-                                    articulo.publicado
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                "
-                                class="px-2.5 py-1 rounded-full text-xs font-medium"
-                            >
-                                {{ articulo.publicado ? "Publicado" : "Borrador" }}
-                            </span>
-                        </td>
+                      
                         <td class="px-6 py-4">
                             <div class="flex space-x-3">
                                 <button
                                     @click="editarArticulo(articulo)"
                                     class="font-medium text-blue-600 hover:text-blue-800 flex items-center"
-                                >
+                                >   
                                     <span>Editar</span>
                                 </button>
                                 <button
@@ -174,19 +151,6 @@
                         ></textarea>
                     </div>
 
-                    <div>
-                        <label
-                            class="block text-sm font-medium text-gray-700 mb-1"
-                            >Estado</label
-                        >
-                        <select
-                            class="w-full bg-white border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            v-model="articuloEditando.publicado"
-                        >
-                            <option :value="true">Publicado</option>
-                            <option :value="false">Borrador</option>
-                        </select>
-                    </div>
 
                     <div class="flex-grow min-w-[200px]">
                         <label
@@ -236,12 +200,14 @@ import axios from "axios";
 const mostrarModal = ref(false);
 const articulos = ref([]);
 
-// stado para el artículo que se está editando
+
+const usuarioActual = ref(null);
+
+//Estado para el artículo que se está editando
 const articuloEditando = ref({
     id: null,
     titulo: "",
     contenido: "",
-    publicado: true,
     rutaImg: null,
     autor_id: 1  
 });
@@ -250,7 +216,6 @@ const articuloEditando = ref({
 const nuevoArticulo = ref({
     titulo: "",
     contenido: "",
-    publicado: true,
     rutaImg: null,
     autor_id: 1  
 });
@@ -261,8 +226,25 @@ const token = localStorage.getItem("access_token");
 //Cargar artículos al iniciar
 onMounted(() => {
     cargarArticulos();
+    obtenerUsuarioActual();
 });
-
+//Obtener el usuario actual al iniciar
+const obtenerUsuarioActual = () => {
+    axios.get("/api/usuario/perfil", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    .then((response) => {
+        usuarioActual.value = response.data;
+        //Actualizar los objetos para usar el ID del usuario actual
+        nuevoArticulo.value.autor_id = usuarioActual.value.id;
+        articuloEditando.value.autor_id = usuarioActual.value.id;
+    })
+    .catch((error) => {
+        console.error("Error al obtener perfil de usuario:", error);
+    });
+};
 //Obtener todos los artículos
 const cargarArticulos = () => {
     axios
@@ -318,7 +300,7 @@ const editarArticulo = (articulo) => {
     //Copiar el artículo pero asegurarnos que siempre tenga autor_id = 1
     articuloEditando.value = { 
         ...articulo,
-        autor_id: 1
+        autor_id: usuarioActual.value ? usuarioActual.value.id : articulo.autor_id
     };
     mostrarModal.value = true;
 };
@@ -330,7 +312,6 @@ const cerrarModal = () => {
         id: null,
         titulo: "",
         contenido: "",
-        publicado: true,
         rutaImg: null,
         autor_id: 1  
     };
@@ -343,8 +324,14 @@ const actualizarArticulo = () => {
         return;
     }
 
-    //Asegurarse de que tenga autor_id = 1 antes de enviar
-    articuloEditando.value.autor_id = 1;
+    // Usar el ID del usuario autenticado
+    if (usuarioActual.value && usuarioActual.value.id) {
+        nuevoArticulo.value.autor_id = usuarioActual.value.id;
+    } else {
+        alert("No hay un usuario autenticado");
+        return;
+    }
+    
 
     axios
         .put(
@@ -402,8 +389,13 @@ const agregarArticulo = () => {
         return;
     }
     
-    //Asegurarse de que tenga autor_id = 1 antes de enviar
-    nuevoArticulo.value.autor_id = 1;
+    //Usar el ID del usuario autenticado
+    if (usuarioActual.value && usuarioActual.value.id) {
+        nuevoArticulo.value.autor_id = usuarioActual.value.id;
+    } else {
+        alert("No hay un usuario autenticado");
+        return;
+    }
     
     axios
         .post("/api/articulo", nuevoArticulo.value, {
@@ -419,7 +411,6 @@ const agregarArticulo = () => {
             nuevoArticulo.value = {
                 titulo: "",
                 contenido: "",
-                publicado: true,
                 rutaImg: null,
                 autor_id: 1  
             };
