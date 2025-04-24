@@ -34,7 +34,7 @@ class CarritoController extends Controller
 
     public function show($id)
     {
-        // Obtener un carrito específico por su ID
+        //Obtener un carrito específico por su ID
         $carrito = $this->carrito->with(['productos' => function($query) {
             $query->join('productos', 'productos__carrito.producto_id', '=', 'productos.id')
                 ->select('productos__carrito.*', 'productos.nombre', 'productos.rutaImg', 'productos.precio');

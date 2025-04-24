@@ -20,23 +20,23 @@ class DashboardController extends Controller
     
     public function getMetrics()
     {
-        // Obtener total de usuarios
+        //Obtener total de usuarios
         $totalUsuarios = Usuarios::count();
         $usuariosConNewsletter = Usuarios::where('newsletter', true)->count();
         
-        // Obtener estadísticas de productos
+        //Obtener estadísticas de productos
         $totalProductos = Productos::count();
         $productosVisibles = Productos::where('visible', true)->count();
         $productosSinStock = Productos::where('stock', 0)->count();
         
-        // Total de artículos
+        //Total de artículos
         $totalArticulos = Articulos::count();
         
-        // Total de órdenes y valor promedio
+        //Total de órdenes y valor promedio
         $totalOrdenes = Orders::count();
         $valorPromedio = Orders::avg('costo') ?? 0;
         
-        // Productos más valorados
+        //Productos más valorados
         $productosMasValorados = Productos::select('productos.id', 'productos.nombre', DB::raw('AVG(valoraciones.valoracion) as promedio_valoracion'), DB::raw('COUNT(valoraciones.id) as total_valoraciones'))
             ->leftJoin('valoraciones', 'productos.id', '=', 'valoraciones.producto_id')
             ->groupBy('productos.id', 'productos.nombre')
@@ -45,7 +45,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
         
-        // Productos más vendidos
+        //Productos más vendidos
         $productosMasVendidos = DB::table('productos')
             ->select('productos.id', 'productos.nombre', DB::raw('SUM(productos_order.cantidad) as total_vendidos'))
             ->join('productos_order', 'productos.id', '=', 'productos_order.producto_id')
@@ -54,7 +54,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Ventas por mes (últimos 6 meses)
+        //Ventas por mes (últimos 6 meses)
         $ventasPorMes = Orders::select(
             DB::raw('MONTH(created_at) as mes'),
             DB::raw('YEAR(created_at) as año'),
