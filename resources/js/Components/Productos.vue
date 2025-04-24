@@ -344,18 +344,19 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import { showErrorMessage, extractErrorMessage } from '../errorHandler';
 
-// Variables para ordenación
+//Variables para ordenación
 const ordenarPor = ref('id');
 const ordenAscendente = ref(true);
 
-// Función para cambiar el criterio de ordenación
+//Función para cambiar el criterio de ordenación
 const cambiarOrden = (campo) => {
     if (ordenarPor.value === campo) {
-        // Si ya estábamos ordenando por este campo, invertimos la dirección
+        //Si ya estábamos ordenando por este campo, invertimos la dirección
         ordenAscendente.value = !ordenAscendente.value;
     } else {
-        // Si cambiamos de campo, establecemos orden ascendente por defecto
+        //Si cambiamos de campo, establecemos orden ascendente por defecto
         ordenarPor.value = campo;
         ordenAscendente.value = true;
     }
@@ -372,7 +373,7 @@ const subirImagen = (event, esEdicion = false) => {
         return;
     }
 
-    // Convertir a base64
+    //Convertir a base64
     const reader = new FileReader();
     reader.onload = (e) => {
         if (esEdicion) {
@@ -384,12 +385,12 @@ const subirImagen = (event, esEdicion = false) => {
     reader.readAsDataURL(file);
 };
 
-// Estados reactivos
+//Estados reactivos
 const mostrarModal = ref(false);
 const productos = ref([]);
 const categorias = ref([]);
 
-// Estado para el producto que se está editando
+//Estado para el producto que se está editando
 const productoEditando = ref({
     id: null,
     nombre: "",
@@ -401,7 +402,7 @@ const productoEditando = ref({
     visible: true,
 });
 
-// Estado para un nuevo producto
+//Estado para un nuevo producto
 const nuevoProducto = ref({
     nombre: "",
     descripcion: "",
@@ -412,13 +413,13 @@ const nuevoProducto = ref({
     visible: true,
 });
 
-// Productos ordenados según criterio seleccionado
+//Productos ordenados según criterio seleccionado
 const productosOrdenados = computed(() => {
     return [...productos.value].sort((a, b) => {
         let valorA = a[ordenarPor.value];
         let valorB = b[ordenarPor.value];
         
-        // Manejo especial para categoría (mostrar el nombre en vez del ID)
+        //Manejo especial para categoría (mostrar el nombre en vez del ID)
         if (ordenarPor.value === 'categoria_id') {
             const categoriaA = categorias.value.find(c => c.id === valorA);
             const categoriaB = categorias.value.find(c => c.id === valorB);
@@ -426,19 +427,19 @@ const productosOrdenados = computed(() => {
             valorB = categoriaB ? categoriaB.nombre : '';
         }
         
-        // Comparación según tipo de dato
+        //Comparación según tipo de dato
         if (typeof valorA === 'string' || ordenarPor.value === 'categoria_id') {
-            // Ordenación para strings 
+            // Ordenación por strings 
             valorA = String(valorA).toLowerCase();
             valorB = String(valorB).toLowerCase();
             const comparacion = valorA.localeCompare(valorB);
             return ordenAscendente.value ? comparacion : -comparacion;
         } else if (typeof valorA === 'number') {
-            // Ordenación para números
+            //Ordenación para números
             const comparacion = valorA - valorB;
             return ordenAscendente.value ? comparacion : -comparacion;
         } else if (typeof valorA === 'boolean') {
-            // Ordenación para booleanos
+            //Ordenación para booleanos
             const comparacion = valorA === valorB ? 0 : valorA ? 1 : -1;
             return ordenAscendente.value ? comparacion : -comparacion;
         } else {
@@ -524,8 +525,7 @@ const cerrarModal = () => {
         visible: true,
     };
 };
-
-//Actualizar un producto
+//Mostrar mensaje de error
 const actualizarProducto = () => {
     axios
         .put(
@@ -538,7 +538,7 @@ const actualizarProducto = () => {
             }
         )
         .then((response) => {
-            // Actualizar el producto en la lista local
+            //Actualizar el producto en la lista local
             const index = productos.value.findIndex(
                 (p) => p.id === productoEditando.value.id
             );
@@ -549,11 +549,11 @@ const actualizarProducto = () => {
         })
         .catch((error) => {
             console.error("Error al actualizar producto:", error);
-            alert("Error al actualizar producto");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
-//Eliminar un producto
+//Para eliminar un producto
 const eliminarProducto = (id) => {
     if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
         return;
@@ -572,11 +572,11 @@ const eliminarProducto = (id) => {
         })
         .catch((error) => {
             console.error("Error al eliminar producto:", error);
-            alert("Error al eliminar producto");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
-//Agregar un nuevo producto
+//Para agregar un producto
 const agregarProducto = () => {
     axios
         .post("/api/producto", nuevoProducto.value, {
@@ -585,10 +585,10 @@ const agregarProducto = () => {
             },
         })
         .then((response) => {
-            // Agregar el nuevo producto a la lista
+            //Agregar el nuevo producto a la lista
             productos.value.push(response.data);
 
-            // Reiniciar el formulario
+            //Reiniciar el formulario
             nuevoProducto.value = {
                 nombre: "",
                 descripcion: "",
@@ -601,7 +601,7 @@ const agregarProducto = () => {
         })
         .catch((error) => {
             console.error("Error al agregar producto:", error);
-            alert("Error al agregar producto");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 </script>
