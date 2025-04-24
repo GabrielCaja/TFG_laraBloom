@@ -344,7 +344,7 @@ onMounted(async () => {
     }
 });
 
-// Función para obtener la altura proporcional de las barras del gráfico
+//Función para obtener la altura proporcional de las barras del gráfico
 const getBarHeight = (value) => {
     if (
         !metrics.value.ventas_mensuales ||
@@ -358,7 +358,7 @@ const getBarHeight = (value) => {
     return maxValue ? (value / maxValue) * 90 : 0; // 90% como máximo para dejar espacio para el texto
 };
 
-// Función para convertir el número de mes a nombre
+//Función para convertir el número de mes a nombre
 const getNombreMes = (mes) => {
     const meses = [
         "Ene",

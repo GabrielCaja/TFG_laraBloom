@@ -448,16 +448,16 @@ const productosOrdenados = computed(() => {
     });
 });
 
-// Token de autenticación
+//Token de autenticación
 const token = localStorage.getItem("access_token");
 
-// Cargar productos y categorías al iniciar
+//Cargar productos y categorías al iniciar
 onMounted(() => {
     cargarProductos();
     cargarCategorias();
 });
 
-// Obtener todos los productos
+//Obtener todos los productos
 const cargarProductos = () => {
     axios
         .get("/api/producto", {
@@ -473,7 +473,7 @@ const cargarProductos = () => {
         });
 };
 
-// Obtener todas las categorías
+//Obtener todas las categorías
 const cargarCategorias = () => {
     axios
         .get("/api/categoria", {
@@ -489,13 +489,13 @@ const cargarCategorias = () => {
         });
 };
 
-// Obtener el nombre de una categoría por su ID
+//Obtener el nombre de una categoría por su ID
 const getNombreCategoria = (categoriaId) => {
     const categoria = categorias.value.find((c) => c.id === categoriaId);
     return categoria ? categoria.nombre : "Desconocida";
 };
 
-// Abrir modal para editar un producto
+//Abrir modal para editar un producto
 const editarProducto = (producto) => {
     productoEditando.value = {
         id: producto.id,
@@ -510,7 +510,7 @@ const editarProducto = (producto) => {
     mostrarModal.value = true;
 };
 
-// Cerrar el modal
+//Cerrar el modal
 const cerrarModal = () => {
     mostrarModal.value = false;
     productoEditando.value = {
@@ -525,7 +525,7 @@ const cerrarModal = () => {
     };
 };
 
-// Actualizar un producto
+//Actualizar un producto
 const actualizarProducto = () => {
     axios
         .put(
@@ -553,7 +553,7 @@ const actualizarProducto = () => {
         });
 };
 
-// Eliminar un producto
+//Eliminar un producto
 const eliminarProducto = (id) => {
     if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
         return;
@@ -576,7 +576,7 @@ const eliminarProducto = (id) => {
         });
 };
 
-// Agregar un nuevo producto
+//Agregar un nuevo producto
 const agregarProducto = () => {
     axios
         .post("/api/producto", nuevoProducto.value, {

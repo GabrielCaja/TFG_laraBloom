@@ -149,34 +149,34 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-// Estados reactivos
+//Estados reactivos
 const mostrarModal = ref(false);
 const categorias = ref([]);
 const productos = ref([]); // Para contar productos asociados
 
-// Estado para la categoría que se está editando
+//Estado para la categoría que se está editando
 const categoriaEditando = ref({
     id: null,
     nombre: "",
     descripcion: ""
 });
 
-// Estado para una nueva categoría
+//Estado para una nueva categoría
 const nuevaCategoria = ref({
     nombre: "",
     descripcion: ""
 });
 
-// Token de autenticación
+//Token de autenticación
 const token = localStorage.getItem("access_token");
 
-// Cargar categorías al iniciar
+//Cargar categorías al iniciar
 onMounted(() => {
     cargarCategorias();
     cargarProductos();
 });
 
-// Obtener todas las categorías
+//Obtener todas las categorías
 const cargarCategorias = () => {
     axios
         .get("/api/categoria", {
@@ -192,7 +192,7 @@ const cargarCategorias = () => {
         });
 };
 
-// Cargar productos para contar asociaciones
+//Cargar productos para contar asociaciones
 const cargarProductos = () => {
     axios
         .get("/api/producto", {
@@ -208,12 +208,12 @@ const cargarProductos = () => {
         });
 };
 
-// Obtener el número de productos asociados a una categoría
+//Obtener el número de productos asociados a una categoría
 const getNumeroProductos = (categoriaId) => {
     return productos.value.filter(p => p.categoria_id === categoriaId).length;
 };
 
-// Abrir modal para editar una categoría
+//Abrir modal para editar una categoría
 const editarCategoria = (categoria) => {
     categoriaEditando.value = {
         id: categoria.id,
@@ -292,7 +292,7 @@ const eliminarCategoria = (id) => {
         });
 };
 
-// Agregar una nueva categoría
+//Agregar una nueva categoría
 const agregarCategoria = () => {
     if (!nuevaCategoria.value.nombre) {
         alert("El nombre de la categoría es obligatorio");
@@ -306,10 +306,10 @@ const agregarCategoria = () => {
             },
         })
         .then((response) => {
-            // Agregar la nueva categoría a la lista
+            //Agregar la nueva categoría a la lista
             categorias.value.push(response.data);
 
-            // Reiniciar el formulario
+            //Reiniciar el formulario
             nuevaCategoria.value = {
                 nombre: "",
                 descripcion: "",

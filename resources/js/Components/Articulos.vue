@@ -232,38 +232,38 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-// Estados reactivos
+//Estados reactivos
 const mostrarModal = ref(false);
 const articulos = ref([]);
 
-// Estado para el artículo que se está editando
+// stado para el artículo que se está editando
 const articuloEditando = ref({
     id: null,
     titulo: "",
     contenido: "",
     publicado: true,
     rutaImg: null,
-    autor_id: 1  // Siempre usar autor_id 1
+    autor_id: 1  
 });
 
-// Estado para un nuevo artículo
+//Estado para un nuevo artículo
 const nuevoArticulo = ref({
     titulo: "",
     contenido: "",
     publicado: true,
     rutaImg: null,
-    autor_id: 1  // Siempre usar autor_id 1
+    autor_id: 1  
 });
 
-// Token de autenticación
+//Token de autenticación
 const token = localStorage.getItem("access_token");
 
-// Cargar artículos al iniciar
+//Cargar artículos al iniciar
 onMounted(() => {
     cargarArticulos();
 });
 
-// Obtener todos los artículos
+//Obtener todos los artículos
 const cargarArticulos = () => {
     axios
         .get("/api/articulo", {
@@ -279,7 +279,7 @@ const cargarArticulos = () => {
         });
 };
 
-// Formatear fecha para la tabla
+//Formatear fecha para la tabla
 const formatearFecha = (fecha) => {
     if (!fecha) return '';
     const date = new Date(fecha);
@@ -290,18 +290,18 @@ const formatearFecha = (fecha) => {
     });
 };
 
-// Subir imagen (funciona tanto para nuevo artículo como para edición)
+//Subir imagen (funciona tanto para nuevo artículo como para edición)
 const subirImagen = (event, esEdicion = false) => {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Verificar tamaño (máximo 2MB) para no saturar la base de datos
+    //Verificar tamaño (máximo 2MB) para no saturar la base de datos
     if (file.size > 2 * 1024 * 1024) {
         alert('La imagen no debe superar los 2MB');
         return;
     }
     
-    // Convertir a base64
+    //Convertir a base64
     const reader = new FileReader();
     reader.onload = (e) => {
         if (esEdicion) {
@@ -313,9 +313,9 @@ const subirImagen = (event, esEdicion = false) => {
     reader.readAsDataURL(file);
 };
 
-// Abrir modal para editar un artículo
+//Abrir modal para editar un artículo
 const editarArticulo = (articulo) => {
-    // Copiar el artículo pero asegurarnos que siempre tenga autor_id = 1
+    //Copiar el artículo pero asegurarnos que siempre tenga autor_id = 1
     articuloEditando.value = { 
         ...articulo,
         autor_id: 1
@@ -323,7 +323,7 @@ const editarArticulo = (articulo) => {
     mostrarModal.value = true;
 };
 
-// Cerrar el modal
+//Cerrar el modal
 const cerrarModal = () => {
     mostrarModal.value = false;
     articuloEditando.value = {
@@ -332,18 +332,18 @@ const cerrarModal = () => {
         contenido: "",
         publicado: true,
         rutaImg: null,
-        autor_id: 1  // Mantener autor_id 1
+        autor_id: 1  
     };
 };
 
-// Actualizar un artículo
+//Actualizar un artículo
 const actualizarArticulo = () => {
     if (!articuloEditando.value.titulo) {
         alert("El título es obligatorio");
         return;
     }
 
-    // Asegurarse de que tenga autor_id = 1 antes de enviar
+    //Asegurarse de que tenga autor_id = 1 antes de enviar
     articuloEditando.value.autor_id = 1;
 
     axios
@@ -357,7 +357,7 @@ const actualizarArticulo = () => {
             }
         )
         .then((response) => {
-            // Actualizar el artículo en la lista local
+            //Actualizar el artículo en la lista local
             const index = articulos.value.findIndex(
                 (a) => a.id === articuloEditando.value.id
             );
@@ -372,7 +372,7 @@ const actualizarArticulo = () => {
         });
 };
 
-// Eliminar un artículo
+//Eliminar un artículo con un iD
 const eliminarArticulo = (id) => {
     if (!confirm("¿Estás seguro de que deseas eliminar este artículo?")) {
         return;
@@ -395,14 +395,14 @@ const eliminarArticulo = (id) => {
         });
 };
 
-// Agregar un nuevo artículo
+//Agregar un nuevo artículo
 const agregarArticulo = () => {
     if (!nuevoArticulo.value.titulo) {
         alert("El título del artículo es obligatorio");
         return;
     }
     
-    // Asegurarse de que tenga autor_id = 1 antes de enviar
+    //Asegurarse de que tenga autor_id = 1 antes de enviar
     nuevoArticulo.value.autor_id = 1;
     
     axios
@@ -412,16 +412,16 @@ const agregarArticulo = () => {
             },
         })
         .then((response) => {
-            // Agregar el nuevo artículo a la lista
+            //Agregar el nuevo artículo a la lista
             articulos.value.push(response.data);
 
-            // Reiniciar el formulario
+            //Reiniciar el formulario
             nuevoArticulo.value = {
                 titulo: "",
                 contenido: "",
                 publicado: true,
                 rutaImg: null,
-                autor_id: 1  // Mantener autor_id 1
+                autor_id: 1  
             };
         })
         .catch((error) => {
