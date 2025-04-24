@@ -235,7 +235,7 @@ axios
         console.error(error);
     });
 
-// Editar usuario - Abrir modal
+//Editar usuario - Abrir modal
 const editarUsuario = (usuario) => {
     usuarioEditando.value = {
         id: usuario.id,
@@ -243,12 +243,12 @@ const editarUsuario = (usuario) => {
         email: usuario.email,
         admin: usuario.admin,
         newsletter: usuario.newsletter || false,
-        password: "", // Vacío por seguridad
+        password: "", 
     };
     mostrarModal.value = true;
 };
 
-// Cerrar modal
+//Cerrar modal
 const cerrarModal = () => {
     mostrarModal.value = false;
     usuarioEditando.value = {
@@ -261,12 +261,12 @@ const cerrarModal = () => {
     };
 };
 
-// Actualizar usuario
+//Actualizar usuario
 const actualizarUsuario = () => {
     const token = localStorage.getItem("access_token");
     const datosActualizados = { ...usuarioEditando.value };
 
-    // Si no hay contraseña, la eliminamos para no actualizar este campo
+    //Si no hay contraseña, la eliminamos para no actualizar este campo
     if (!datosActualizados.password) {
         delete datosActualizados.password;
     }
@@ -278,7 +278,7 @@ const actualizarUsuario = () => {
             },
         })
         .then((response) => {
-            // Actualiza el usuario en la lista local
+            //Actualiza el usuario en la lista local
             const index = usuarios.value.findIndex(
                 (u) => u.id === usuarioEditando.value.id
             );
@@ -286,7 +286,7 @@ const actualizarUsuario = () => {
                 usuarios.value[index] = response.data;
             }
 
-            // Cerrar modal y limpiar
+            //Cerrar modal y limpiar
             cerrarModal();
         })
         .catch((error) => {
@@ -341,10 +341,8 @@ const agregarUsuario = () => {
             },
         })
         .then((response) => {
-            // Add the new user to the list
             usuarios.value.push(response.data);
 
-            // Reset form fields
             nuevoUsuario.value = {
                 username: "",
                 email: "",

@@ -148,12 +148,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { showErrorMessage, extractErrorMessage } from '../errorHandler';
 
 //Estados reactivos
 const mostrarModal = ref(false);
 const categorias = ref([]);
-const productos = ref([]); // Para contar productos asociados
-
+const productos = ref([]); 
 //Estado para la categoría que se está editando
 const categoriaEditando = ref({
     id: null,
@@ -223,7 +223,7 @@ const editarCategoria = (categoria) => {
     mostrarModal.value = true;
 };
 
-// Cerrar el modal
+//Cerrar el modal
 const cerrarModal = () => {
     mostrarModal.value = false;
     categoriaEditando.value = {
@@ -232,8 +232,8 @@ const cerrarModal = () => {
         descripcion: ""
     };
 };
+// Para actualizar una categoria
 
-// Actualizar una categoría
 const actualizarCategoria = () => {
     axios
         .put(
@@ -246,7 +246,7 @@ const actualizarCategoria = () => {
             }
         )
         .then((response) => {
-            // Actualizar la categoría en la lista local
+            //Actualizar la categoría en la lista local
             const index = categorias.value.findIndex(
                 (c) => c.id === categoriaEditando.value.id
             );
@@ -257,17 +257,17 @@ const actualizarCategoria = () => {
         })
         .catch((error) => {
             console.error("Error al actualizar categoría:", error);
-            alert("Error al actualizar categoría");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
-// Eliminar una categoría
+// Para eliminar una categoria
 const eliminarCategoria = (id) => {
-    // Verificar si hay productos asociados
+    //Verificar si hay productos asociados
     const productosAsociados = productos.value.filter(p => p.categoria_id === id);
     
     if (productosAsociados.length > 0) {
-        alert(`No se puede eliminar esta categoría porque tiene ${productosAsociados.length} productos asociados.`);
+        showErrorMessage(`No se puede eliminar esta categoría porque tiene ${productosAsociados.length} productos asociados.`);
         return;
     }
     
@@ -288,14 +288,14 @@ const eliminarCategoria = (id) => {
         })
         .catch((error) => {
             console.error("Error al eliminar categoría:", error);
-            alert("Error al eliminar categoría");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
-//Agregar una nueva categoría
+//Para agregar una categoria
 const agregarCategoria = () => {
     if (!nuevaCategoria.value.nombre) {
-        alert("El nombre de la categoría es obligatorio");
+        showErrorMessage("El nombre de la categoría es obligatorio");
         return;
     }
     
@@ -317,7 +317,7 @@ const agregarCategoria = () => {
         })
         .catch((error) => {
             console.error("Error al agregar categoría:", error);
-            alert("Error al agregar categoría");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 </script>

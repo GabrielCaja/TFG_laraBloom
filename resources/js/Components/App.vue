@@ -1,4 +1,6 @@
 <template>
+        <ErrorNotification />
+
     <div>
         <Login v-if="!isAuthenticated" @loginSuccess="handleLoginSuccess" />
         <div v-else class="min-h-screen bg-gray-50">
@@ -77,9 +79,8 @@ import Usuarios from "./Usuarios.vue";
 import Articulos from "./Articulos.vue";
 import Dashboard from "./Dashboard.vue";
 import Categorias from "./Categorias.vue";
-import axios from "axios";
+import ErrorNotification from "./ErrorNotification.vue";
 
-import { ref } from "vue";
 
 export default {
     components: { 
@@ -88,7 +89,8 @@ export default {
         Dashboard,
         Productos,
         Usuarios,
-        Articulos
+        Articulos,
+        ErrorNotification
     },
     data() {
         return {

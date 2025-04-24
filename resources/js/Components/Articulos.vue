@@ -195,7 +195,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-
+import { showErrorMessage, extractErrorMessage } from '../errorHandler';
 //Estados reactivos
 const mostrarModal = ref(false);
 const articulos = ref([]);
@@ -320,18 +320,17 @@ const cerrarModal = () => {
 //Actualizar un artículo
 const actualizarArticulo = () => {
     if (!articuloEditando.value.titulo) {
-        alert("El título es obligatorio");
+        showErrorMessage("El título es obligatorio");
         return;
     }
 
-    // Usar el ID del usuario autenticado
+    //Usar el ID del usuario autenticado
     if (usuarioActual.value && usuarioActual.value.id) {
-        nuevoArticulo.value.autor_id = usuarioActual.value.id;
+        articuloEditando.value.autor_id = usuarioActual.value.id;
     } else {
-        alert("No hay un usuario autenticado");
+        showErrorMessage("No hay un usuario autenticado");
         return;
     }
-    
 
     axios
         .put(
@@ -355,7 +354,7 @@ const actualizarArticulo = () => {
         })
         .catch((error) => {
             console.error("Error al actualizar artículo:", error);
-            alert("Error al actualizar artículo");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
@@ -378,14 +377,14 @@ const eliminarArticulo = (id) => {
         })
         .catch((error) => {
             console.error("Error al eliminar artículo:", error);
-            alert("Error al eliminar artículo");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 
 //Agregar un nuevo artículo
 const agregarArticulo = () => {
     if (!nuevoArticulo.value.titulo) {
-        alert("El título del artículo es obligatorio");
+        showErrorMessage("El título del artículo es obligatorio");
         return;
     }
     
@@ -393,7 +392,7 @@ const agregarArticulo = () => {
     if (usuarioActual.value && usuarioActual.value.id) {
         nuevoArticulo.value.autor_id = usuarioActual.value.id;
     } else {
-        alert("No hay un usuario autenticado");
+        showErrorMessage("No hay un usuario autenticado");
         return;
     }
     
@@ -412,14 +411,13 @@ const agregarArticulo = () => {
                 titulo: "",
                 contenido: "",
                 rutaImg: null,
-                autor_id: 1  
+                autor_id: usuarioActual.value.id
             };
         })
         .catch((error) => {
             console.error("Error al agregar artículo:", error);
-            alert("Error al agregar artículo");
+            showErrorMessage(extractErrorMessage(error));
         });
 };
 </script>
-
 <style scoped></style>
