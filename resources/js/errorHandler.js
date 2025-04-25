@@ -26,7 +26,6 @@ export const extractErrorMessage = (error) => {
     if (error.response.data && error.response.data.message) {
       return error.response.data.message;
     } else if (error.response.data && error.response.data.errors) {
-      //Laravel suele devolver errores de validación en este formato
       const errores = Object.values(error.response.data.errors).flat();
       return errores.join(', ');
     } else {
@@ -67,7 +66,7 @@ export default {
       extractErrorMessage
     };
     
-    //Proporciona las variables reactivas a través de provide/inject
+    //Proporcionar las variables reactivas a través de provide/inject
     app.provide('errorHandler', {
       showError,
       errorMessage,
