@@ -13,6 +13,7 @@ use App\Http\Controllers\api\DashboardController;
 use App\Http\Controllers\api\CarritoController;
 use App\Http\Controllers\api\OrdersController;
 use App\Http\Controllers\api\ProductoOrderController;
+use App\Http\Controllers\api\ContactoController;
 
 //CRUD Usuario
 // Rutas para el perfil del usuario
@@ -43,6 +44,15 @@ Route::resource("comentario", ComentariosController::class);
 // Route::resource("usuario", UsuarioController::class);
 // //Crud ComentariosBlog
 // Route::resource("usuario", UsuarioController::class);
+
+//Formulario de contacto
+Route::post('/contacto', [ContactoController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/contacto', [ContactoController::class, 'index']);
+    Route::get('/contacto/{id}', [ContactoController::class, 'show']);
+    Route::put('/contacto/{id}', [ContactoController::class, 'update']);
+    Route::delete('/contacto/{id}', [ContactoController::class, 'destroy']);
+});
 
 //Auth
 Route::post('/register', [AuthController::class, 'register']);
