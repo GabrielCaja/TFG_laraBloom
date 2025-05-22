@@ -45,6 +45,14 @@
                                 :class="currentView === 'Articulos' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
                             >
                                 <span class="font-medium">Articulos</span>
+                                
+                            </button>
+                            <button 
+                                @click="currentView = 'Contacto'"
+                                class="w-full text-left py-3 px-4 rounded-lg transition-all duration-200 flex items-center"
+                                :class="currentView === 'Contacto' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
+                            >
+                                <span class="font-medium">Contacto</span>
                             </button>
                         </nav>
                     </div>
@@ -80,6 +88,7 @@ import Articulos from "./Articulos.vue";
 import Dashboard from "./Dashboard.vue";
 import Categorias from "./Categorias.vue";
 import ErrorNotification from "./ErrorNotification.vue";
+import Contacto from "./Contacto.vue";
 
 
 export default {
@@ -90,7 +99,8 @@ export default {
         Productos,
         Usuarios,
         Articulos,
-        ErrorNotification
+        ErrorNotification,
+        Contacto
     },
     data() {
         return {
