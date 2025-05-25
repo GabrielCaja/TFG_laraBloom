@@ -9,3 +9,4 @@ import ErrorNotification from './Components/ErrorNotification.vue';
     app.component('ErrorNotification', ErrorNotification);
     //Montar app
     app.mount('#dashboard-content')
+
