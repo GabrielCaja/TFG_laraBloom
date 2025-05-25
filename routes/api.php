@@ -47,6 +47,9 @@ Route::resource("comentario", ComentariosController::class);
 
 //Formulario de contacto
 Route::post('/contacto', [ContactoController::class, 'store']);
+// Ruta protegida con reCAPTCHA
+Route::post('/contacto', [ContactoController::class, 'store'])->middleware('captcha');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/contacto', [ContactoController::class, 'index']);
     Route::get('/contacto/{id}', [ContactoController::class, 'show']);

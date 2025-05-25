@@ -11,11 +11,11 @@ class VerifyCaptcha
 {
     public function handle(Request $request, Closure $next)
     {
-        // Verificar si la solicitud incluye un token de reCAPTCHA
+        //Verificar si la solicitud incluye un token de reCAPTCHA
         if ($request->has('g-recaptcha-response')) {
             $captcha = $request->input('g-recaptcha-response');
             
-            // Verificar si el token es válido
+            //Verificar si el token es válido
             if (!NoCaptcha::verifyResponse($captcha)) {
                 return response()->json([
                     'message' => 'Error de validación de reCAPTCHA'
