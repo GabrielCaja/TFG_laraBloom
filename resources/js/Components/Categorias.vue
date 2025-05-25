@@ -63,8 +63,15 @@
                         <td class="px-6 py-4 font-medium">{{ categoria.id }}</td>
                         <td class="px-6 py-4">{{ categoria.nombre }}</td>
                         <td class="px-6 py-4">{{ categoria.descripcion }}</td>
-                        <td class="px-6 py-4">{{ getNumeroProductos(categoria.id) }}</td>
                         <td class="px-6 py-4">
+                            <button 
+                                @click="verProductosAsociados(categoria.id)"
+                                class="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                {{ getNumeroProductos(categoria.id) }} productos 
+                                <span v-if="getNumeroProductos(categoria.id) > 0">- Ver</span>
+                            </button>
+                        </td>                        <td class="px-6 py-4">
                             <div class="flex space-x-3">
                                 <button
                                     @click="editarCategoria(categoria)"
@@ -84,7 +91,70 @@
                 </tbody>
             </table>
         </div>
+<!-- Modal para ver productos asociados -->
+<div
+    v-if="mostrarModalProductos"
+    class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+>
+    <div
+        class="bg-white rounded-xl shadow-2xl w-full max-w-4xl transform transition-all"
+    >
+        <div class="border-b px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-800">
+                Productos de la categoría: {{ categoriaActual?.nombre }}
+            </h2>
+            <button
+                @click="mostrarModalProductos = false"
+                class="text-gray-500 hover:text-gray-700"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
 
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+       
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr v-for="producto in productosAsociadosActuales" :key="producto.id" class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">{{ producto.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img
+                                    v-if="producto.rutaImg"
+                                    :src="producto.rutaImg"
+                                    alt="Imagen del producto"
+                                    class="h-10 w-10 object-cover rounded"
+                                />
+                                <span v-else class="text-gray-400">Sin imagen</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ producto.nombre }}</td>
+                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="border-t px-6 py-4 flex justify-end">
+            <button
+                @click="mostrarModalProductos = false"
+                type="button"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2.5 px-5 rounded-lg transition-colors"
+            >
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>
         <!-- Modal para editar categoría -->
         <div
             v-if="mostrarModal"
@@ -154,6 +224,9 @@ import { showErrorMessage, extractErrorMessage } from '../errorHandler';
 const mostrarModal = ref(false);
 const categorias = ref([]);
 const productos = ref([]); 
+const mostrarModalProductos = ref(false);
+const productosAsociadosActuales = ref([]);
+const categoriaActual = ref(null);
 //Estado para la categoría que se está editando
 const categoriaEditando = ref({
     id: null,
@@ -161,6 +234,20 @@ const categoriaEditando = ref({
     descripcion: ""
 });
 
+//Función para ver productos asociados a una categoría
+const verProductosAsociados = (categoriaId) => {
+    const productosFiltrados = productos.value.filter(p => p.categoria_id === categoriaId);
+    const categoria = categorias.value.find(c => c.id === categoriaId);
+    
+    if (productosFiltrados.length === 0) {
+        showErrorMessage(`La categoría ${categoria.nombre} no tiene productos asociados.`);
+        return;
+    }
+    
+    productosAsociadosActuales.value = productosFiltrados;
+    categoriaActual.value = categoria;
+    mostrarModalProductos.value = true;
+};
 //Estado para una nueva categoría
 const nuevaCategoria = ref({
     nombre: "",
