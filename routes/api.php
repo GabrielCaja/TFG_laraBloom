@@ -14,6 +14,7 @@ use App\Http\Controllers\api\CarritoController;
 use App\Http\Controllers\api\OrdersController;
 use App\Http\Controllers\api\ProductoOrderController;
 use App\Http\Controllers\api\ContactoController;
+use App\Http\Controllers\api\PaymentController;
 
 //CRUD Usuario
 // Rutas para el perfil del usuario
@@ -65,6 +66,17 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/metrics', [DashboardController::class, 'getMetrics'])->middleware('auth:sanctum');
 
 
+// Rutas de pago
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/payment/create-intent', [PaymentController::class, 'createPaymentIntent']);
+    Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment']);
+});
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// Rutas para pedidos de usuario
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/mis-pedidos', [OrdersController::class, 'misPedidos']);
+    Route::get('/pedido/{id}', [OrdersController::class, 'verPedido']);
+});
