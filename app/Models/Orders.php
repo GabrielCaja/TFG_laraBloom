@@ -2,21 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Productos;
+use App\Models\Usuarios;
 
 class Orders extends Model
 {
-    protected $table = 'orders';
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'costo', 
         'estado',
-        'metodo_pago',
-        'stripe_payment_intent_id'
-    ];   
-    protected $hidden = ['created_at', 'updated_at'];
-    protected $primaryKey = 'id';
-    public $timestamps = true;
+        'stripe_payment_intent_id',
+        'metodo_pago'
+    ];
+
+    protected $casts = [
+        'costo' => 'decimal:2'
+    ];
 
     public function usuario()
     {
@@ -25,6 +30,7 @@ class Orders extends Model
 
     public function productos()
     {
-        return $this->hasMany(ProductoOrder::class, 'order_id');
+        return $this->belongsToMany(Productos::class, 'productos_order', 'order_id', 'producto_id')
+                    ->withPivot('cantidad', 'precio_compra');
     }
 }

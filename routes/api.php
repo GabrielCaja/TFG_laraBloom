@@ -2,81 +2,77 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\UsuarioController;
-use App\Http\Controllers\api\ProductosController;
-use App\Http\Controllers\api\CategoriasController;
-use App\Http\Controllers\api\ArticulosController;
-use App\Http\Controllers\api\ValoracionesController;
-use App\Http\Controllers\api\ComentariosController;
-use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\DashboardController;
-use App\Http\Controllers\api\CarritoController;
-use App\Http\Controllers\api\OrdersController;
-use App\Http\Controllers\api\ProductoOrderController;
-use App\Http\Controllers\api\ContactoController;
-use App\Http\Controllers\api\PaymentController;
+use App\Http\Controllers\api\{
+    UsuarioController,
+    ProductosController,
+    CategoriasController,
+    ArticulosController,
+    ValoracionesController,
+    ComentariosController,
+    AuthController,
+    DashboardController,
+    CarritoController,
+    OrdersController,
+    ProductoOrderController,
+    ContactoController,
+    PaymentController
+};
 
-//CRUD Usuario
-// Rutas para el perfil del usuario
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/usuario/perfil', [UsuarioController::class, 'perfil']);
-    Route::put('/usuario/perfil', [UsuarioController::class, 'actualizarPerfil']);
-});
-Route::resource("usuario", UsuarioController::class)->middleware('auth:sanctum');
-
-//CRUD Produtos
-Route::resource("producto", ProductosController::class);
-//CRUD Categorias
-Route::resource("categoria", CategoriasController::class);
-//Crud articulo
-Route::resource("articulo", ArticulosController::class);
-//Crud carrito
-Route::get('/carrito/mi-carrito', [CarritoController::class, 'miCarrito'])->middleware('auth:sanctum');
-Route::delete('carrito/producto/{productoId}', [CarritoController::class, 'eliminarProducto'])->middleware('auth:sanctum');
-Route::delete('carrito/vaciar', [CarritoController::class, 'vaciarCarrito'])->middleware('auth:sanctum');
-Route::put('/carrito/actualizar', [CarritoController::class, 'actualizarProducto'])->middleware('auth:sanctum');
-
-Route::resource("carrito", CarritoController::class)->middleware('auth:sanctum');
-//Crud Valoraciones
-Route::resource("valoracion", ValoracionesController::class);
-//Crud ComentariosBlog
-Route::resource("comentario", ComentariosController::class);
-// //Crud Articulos
-// Route::resource("usuario", UsuarioController::class);
-// //Crud ComentariosBlog
-// Route::resource("usuario", UsuarioController::class);
-
-//Formulario de contacto
-Route::post('/contacto', [ContactoController::class, 'store']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/contacto', [ContactoController::class, 'index']);
-    Route::get('/contacto/{id}', [ContactoController::class, 'show']);
-    Route::put('/contacto/{id}', [ContactoController::class, 'update']);
-    Route::delete('/contacto/{id}', [ContactoController::class, 'destroy']);
-});
-
-//Auth
+// RUTAS DE AUTENTICACIÓN
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-//Dashboard
+// RUTAS PÚBLICAS
+Route::resource('producto', ProductosController::class);
+Route::resource('categoria', CategoriasController::class);
+Route::resource('articulo', ArticulosController::class);
+Route::resource('valoracion', ValoracionesController::class);
+Route::resource('comentario', ComentariosController::class);
+Route::post('/contacto', [ContactoController::class, 'store']);
+
+
+// Dashboard 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
-Route::get('/metrics', [DashboardController::class, 'getMetrics'])->middleware('auth:sanctum');
 
-
-// Rutas de pago
+// RUTAS PROTEGIDAS (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/payment/create-intent', [PaymentController::class, 'createPaymentIntent']);
-    Route::post('/payment/confirm', [PaymentController::class, 'confirmPayment']);
-});
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-// Rutas para pedidos de usuario
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/mis-pedidos', [OrdersController::class, 'misPedidos']);
-    Route::get('/pedido/{id}', [OrdersController::class, 'verPedido']);
+    
+    // Usuario autenticado
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    
+    // Perfil de usuario
+    Route::get('/usuario/perfil', [UsuarioController::class, 'perfil']);
+    Route::put('/usuario/perfil', [UsuarioController::class, 'actualizarPerfil']);
+    Route::resource('usuario', UsuarioController::class);
+    
+    // Carrito
+    Route::prefix('carrito')->group(function () {
+        Route::get('/mi-carrito', [CarritoController::class, 'miCarrito']);
+        Route::delete('/producto/{productoId}', [CarritoController::class, 'eliminarProducto']);
+        Route::delete('/vaciar', [CarritoController::class, 'vaciarCarrito']);
+        Route::put('/actualizar', [CarritoController::class, 'actualizarProducto']);
+    });
+    Route::resource('carrito', CarritoController::class);
+    
+    // Pedidos
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/pedidos/mis-pedidos', [OrdersController::class, 'misPedidos']);
+        Route::get('/pedidos/{id}', [OrdersController::class, 'verPedido']);;
+    });
+    
+    // Pagos
+    Route::prefix('payment')->group(function () {
+        Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
+        Route::post('/confirm', [PaymentController::class, 'confirmPayment']);
+    });
+    
+    // Contacto (gestión admin)
+    Route::resource('contacto', ContactoController::class)->except(['store']);
+    
+    // Dashboard con métricas
+    Route::get('/metrics', [DashboardController::class, 'getMetrics']);
 });
