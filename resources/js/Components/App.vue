@@ -54,6 +54,13 @@
                             >
                                 <span class="font-medium">Contacto</span>
                             </button>
+                            <button 
+    @click="currentView = 'Valoraciones'"
+    class="w-full text-left py-3 px-4 rounded-lg transition-all duration-200 flex items-center"
+    :class="currentView === 'Valoraciones' ? 'bg-blue-600 shadow-md' : 'hover:bg-gray-800 hover:pl-6'"
+>
+    <span class="font-medium">Valoraciones</span>
+</button>
                         </nav>
                     </div>
                     <!-- Logout -->
@@ -89,6 +96,7 @@ import Dashboard from "./Dashboard.vue";
 import Categorias from "./Categorias.vue";
 import ErrorNotification from "./ErrorNotification.vue";
 import Contacto from "./Contacto.vue";
+import Valoraciones from "./Valoraciones.vue";
 
 
 export default {
@@ -100,7 +108,8 @@ export default {
         Usuarios,
         Articulos,
         ErrorNotification,
-        Contacto
+        Contacto,
+        Valoraciones
     },
     data() {
         return {

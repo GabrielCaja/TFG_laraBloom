@@ -38,7 +38,8 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 
 // RUTAS PROTEGIDAS (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
-    
+    Route::apiResource('valoraciones', ValoracionesController::class);
+
     // Usuario autenticado
     Route::get('/user', function (Request $request) {
         return $request->user();
