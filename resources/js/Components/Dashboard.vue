@@ -145,8 +145,8 @@
             </div>
         </div>
 
-        <!-- Productos más vendidos y valorados -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Grid con 3 columnas: Productos vendidos, Productos valorados y Ventas mensuales -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Productos más vendidos -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-bold text-gray-800 mb-4">
@@ -164,7 +164,7 @@
                                 <th
                                     class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
-                                    Unidades vendidas
+                                    Unidades
                                 </th>
                             </tr>
                         </thead>
@@ -221,11 +221,6 @@
                                 >
                                     Valoración
                                 </th>
-                                <th
-                                    class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                >
-                                    Reseñas
-                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -250,11 +245,6 @@
                                     }}
                                     / 5
                                 </td>
-                                <td
-                                    class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-800"
-                                >
-                                    {{ producto.total_valoraciones }}
-                                </td>
                             </tr>
                             <tr
                                 v-if="
@@ -263,7 +253,7 @@
                                 "
                             >
                                 <td
-                                    colspan="3"
+                                    colspan="2"
                                     class="px-4 py-3 text-sm text-center text-gray-500"
                                 >
                                     No hay datos disponibles
@@ -273,43 +263,59 @@
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Gráfico de ventas mensuales -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">
-                Ventas Mensuales
-            </h2>
-            <div class="h-64">
-                <div
-                    v-if="
-                        metrics.ventas_mensuales &&
-                        metrics.ventas_mensuales.length > 0
-                    "
-                    class="h-full"
-                >
-                    <div class="flex h-full items-end space-x-4">
-                        <div
-                            v-for="venta in metrics.ventas_mensuales"
-                            :key="`${venta.año}-${venta.mes}`"
-                            class="flex flex-col items-center"
-                        >
-                            <div
-                                class="w-12 bg-blue-500 rounded-t-md"
-                                :style="{
-                                    height: `${getBarHeight(venta.total)}%`,
-                                }"
-                            ></div>
-                            <span class="text-xs font-medium mt-2">{{
-                                getNombreMes(venta.mes)
-                            }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div v-else class="flex items-center justify-center h-full">
-                    <p class="text-gray-500">
-                        No hay datos de ventas disponibles
-                    </p>
+            <!-- Ventas mensuales en tabla -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    Ventas Mensuales
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Mes
+                                </th>
+                                <th
+                                    class="px-4 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                >
+                                    Total
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr
+                                v-for="venta in metrics.ventas_mensuales"
+                                :key="`${venta.año}-${venta.mes}`"
+                            >
+                                <td
+                                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800"
+                                >
+                                    {{ getNombreMes(venta.mes) }} {{ venta.año }}
+                                </td>
+                                <td
+                                    class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-800"
+                                >
+                                    {{ formatearMoneda(venta.total) }}
+                                </td>
+                            </tr>
+                            <tr
+                                v-if="
+                                    !metrics.ventas_mensuales ||
+                                    metrics.ventas_mensuales.length === 0
+                                "
+                            >
+                                <td
+                                    colspan="2"
+                                    class="px-4 py-3 text-sm text-center text-gray-500"
+                                >
+                                    No hay datos disponibles
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -344,36 +350,20 @@ onMounted(async () => {
     }
 });
 
-//Función para obtener la altura proporcional de las barras del gráfico
-const getBarHeight = (value) => {
-    if (
-        !metrics.value.ventas_mensuales ||
-        metrics.value.ventas_mensuales.length === 0
-    )
-        return 0;
-
-    const maxValue = Math.max(
-        ...metrics.value.ventas_mensuales.map((v) => v.total)
-    );
-    return maxValue ? (value / maxValue) * 90 : 0; // 90% como máximo para dejar espacio para el texto
-};
-
 //Función para convertir el número de mes a nombre
 const getNombreMes = (mes) => {
     const meses = [
-        "Ene",
-        "Feb",
-        "Mar",
-        "Abr",
-        "May",
-        "Jun",
-        "Jul",
-        "Ago",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dic",
+        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
     ];
     return meses[mes - 1];
+};
+
+//Función para formatear moneda
+const formatearMoneda = (valor) => {
+    return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR'
+    }).format(parseFloat(valor) || 0);
 };
 </script>
