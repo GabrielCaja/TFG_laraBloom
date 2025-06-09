@@ -35,10 +35,10 @@ Route::post('/contacto', [ContactoController::class, 'store']);
 // Dashboard 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 
+Route::apiResource('valoraciones', ValoracionesController::class);
 
 // RUTAS PROTEGIDAS (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('valoraciones', ValoracionesController::class);
 
     // Usuario autenticado
     Route::get('/user', function (Request $request) {
