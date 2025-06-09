@@ -4,84 +4,6 @@
             Gestión de Valoraciones
         </h1>
 
-        <!-- Formulario para agregar valoración -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">
-                Agregar nueva valoración
-            </h2>
-            <form class="space-y-4" @submit.prevent>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Producto
-                        </label>
-                        <select
-                            class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            v-model="nuevaValoracion.producto_id"
-                        >
-                            <option value="" disabled>Seleccione un producto</option>
-                            <option
-                                v-for="producto in productos"
-                                :key="producto.id"
-                                :value="producto.id"
-                            >
-                                {{ producto.nombre }}
-                            </option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Valoración (1-5 estrellas)
-                        </label>
-                        <div class="flex items-center space-x-2">
-                            <div class="flex">
-                                <button
-                                    v-for="estrella in 5"
-                                    :key="estrella"
-                                    type="button"
-                                    @click="nuevaValoracion.valoracion = estrella"
-                                    class="text-2xl transition-colors"
-                                    :class="estrella <= nuevaValoracion.valoracion ? 'text-yellow-400' : 'text-gray-300'"
-                                >
-                                    ★
-                                </button>
-                            </div>
-                            <span class="text-sm text-gray-600">
-                                ({{ nuevaValoracion.valoracion || 0 }}/5)
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Comentario
-                    </label>
-                    <textarea
-                        placeholder="Escribe tu comentario sobre el producto..."
-                        class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        rows="4"
-                        maxlength="500"
-                        v-model="nuevaValoracion.comentario"
-                    ></textarea>
-                    <p class="text-sm text-gray-500 mt-1">
-                        {{ nuevaValoracion.comentario.length }}/500 caracteres
-                    </p>
-                </div>
-
-                <div>
-                    <button
-                        @click="agregarValoracion"
-                        :disabled="!puedeEnviar"
-                        class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2.5 px-5 rounded-lg transition-colors"
-                    >
-                        Enviar Valoración
-                    </button>
-                </div>
-            </form>
-        </div>
-
         <!-- Lista de valoraciones -->
         <div class="overflow-x-auto shadow-lg rounded-lg">
             <table class="w-full text-sm text-left text-gray-500">
@@ -200,7 +122,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { showErrorMessage, extractErrorMessage } from '../errorHandler';
 
@@ -211,46 +133,14 @@ const usuarios = ref([]);
 const mostrarModal = ref(false);
 const valoracionActual = ref({});
 
-// Estado para nueva valoración
-const nuevaValoracion = ref({
-    user_id: null, // Se establecerá con el usuario actual
-    producto_id: "",
-    valoracion: 0,
-    comentario: ""
-});
-
 const token = localStorage.getItem("access_token");
-
-// Computed para validar si se puede enviar
-const puedeEnviar = computed(() => {
-    return nuevaValoracion.value.producto_id && 
-           nuevaValoracion.value.valoracion > 0 && 
-           nuevaValoracion.value.comentario.trim().length > 0;
-});
 
 // Cargar datos al iniciar
 onMounted(() => {
     cargarValoraciones();
     cargarProductos();
     cargarUsuarios();
-    obtenerUsuarioActual();
 });
-
-// Obtener usuario actual
-const obtenerUsuarioActual = () => {
-    axios.get("/api/usuario/perfil", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-    .then((response) => {
-        nuevaValoracion.value.user_id = response.data.id;
-    })
-    .catch((error) => {
-        console.error("Error al obtener usuario actual:", error);
-        showErrorMessage("Error al obtener datos del usuario");
-    });
-};
 
 // Cargar valoraciones
 const cargarValoraciones = () => {
@@ -323,37 +213,6 @@ const formatearFecha = (fecha) => {
     });
 };
 
-// Agregar valoración
-const agregarValoracion = () => {
-    if (!puedeEnviar.value) {
-        showErrorMessage("Por favor completa todos los campos");
-        return;
-    }
-
-    axios.post("/api/valoraciones", nuevaValoracion.value, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-    .then((response) => {
-        valoraciones.value.push(response.data);
-        
-        // Reiniciar formulario
-        nuevaValoracion.value = {
-            user_id: nuevaValoracion.value.user_id, // Mantener el user_id
-            producto_id: "",
-            valoracion: 0,
-            comentario: ""
-        };
-        
-        showErrorMessage("Valoración agregada correctamente", "success");
-    })
-    .catch((error) => {
-        console.error("Error al agregar valoración:", error);
-        showErrorMessage(extractErrorMessage(error));
-    });
-};
-
 // Ver valoración completa
 const verValoracion = (valoracion) => {
     valoracionActual.value = valoracion;
@@ -382,6 +241,7 @@ const eliminarValoracion = (id) => {
         if (mostrarModal.value && valoracionActual.value.id === id) {
             cerrarModal();
         }
+        showErrorMessage("Valoración eliminada correctamente", "success");
     })
     .catch((error) => {
         console.error("Error al eliminar valoración:", error);
